@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pidatoku - Pantau Pidato Presiden & Sentimen Pasar</title>
+</head>
+
+<body>
+
+    <header>
+        <a href="#main">Lewati ke konten utama</a>
+        <h1>Pidatoku</h1>
+        <p>Platform Pemantauan Pidato Kenegaraan dan Pergerakan IHSG & Kurs IDR/USD</p>
+        <nav aria-label="Navigasi utama">
+            <ul>
+                <li><a href="#live-monitor">Live Monitor</a></li>
+                <li><a href="#arsip-pidato">Arsip Data</a></li>
+                <li><a href="#kontak">Beri Masukan</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main">
+
+        <section id="live-monitor">
+            <h2>Monitor Live Pidato & Pasar Finansial</h2>
+            <div>
+                <h3>Siaran Langsung Pidato Presiden</h3>
+                <img src="live-placeholder.jpg" alt="Area pratinjau untuk pemutar video siaran langsung pidato kenegaraan">
+                <a href="live-stream.html">Buka Mode Layar Penuh</a>
+            </div>
+            <div>
+                <h3>Indikator Pasar Real-time</h3>
+                <div>
+                    <h4>IHSG (Indeks Harga Saham Gabungan)</h4>
+                    <p>Titik saat ini: 7.250,45</p>
+                </div>
+                <div>
+                    <h4>Kurs Rupiah ke Dolar AS</h4>
+                    <p>Nilai tukar: Rp 15.600</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="arsip-pidato">
+            <h2>Arsip Pidato Historis & Dampak Pasar</h2>
+            <article>
+                <h3>Pidato RUU APBN 2027 dan Nota Keuangan</h3>
+                <p>Tanggal: 16 Agustus 2026</p>
+                <img src="thumbnail-pidato1.jpg" alt="Presiden membacakan nota keuangan di gedung DPR">
+                <p>Ringkasan: Penjelasan mengenai fokus anggaran pemerintah pada sektor infrastruktur digital, ketahanan energi, dan hilirisasi industri teknologi.</p>
+                <div>
+                    <p>Pergerakan IHSG selama pidato: +0.8%</p>
+                    <p>Pergerakan Kurs selama pidato: Menguat 25 poin</p>
+                </div>
+            </article>
+            <article>
+                <h3>Pidato Kenegaraan Peringatan Kemerdekaan RI</h3>
+                <p>Tanggal: 17 Agustus 2026</p>
+                <img src="thumbnail-pidato2.jpg" alt="Presiden memberikan amanat pada upacara kemerdekaan">
+                <p>Ringkasan: Penekanan pada geopolitik, kemandirian bangsa, dan strategi menghadapi tantangan ekonomi global.</p>
+                <div>
+                    <p>Pergerakan IHSG selama pidato: Pasar Libur</p>
+                    <p>Pergerakan Kurs selama pidato: Pasar Libur</p>
+                </div>
+            </article>
+        </section>
+
+        <section id="kontak">
+            <h2>Formulir Masukan & Permintaan Fitur</h2>
+            <p>Beri tahu kami data finansial atau analitik apa lagi yang ingin Anda lihat terintegrasi di platform ini.</p>
+            <form action="proses-masukan.php" method="POST">
+                <div>
+                    <label for="nama_lengkap">Nama Lengkap</label>
+                    <input type="text" id="nama_lengkap" name="nama_lengkap" required>
+                </div>
+                <div>
+                    <label for="email_pengguna">Alamat Email</label>
+                    <input type="email" id="email_pengguna" name="email_pengguna" required>
+                </div>
+                <div>
+                    <label for="kategori_masukan">Kategori</label>
+                    <select id="kategori_masukan" name="kategori_masukan">
+<option value="fitur">Permintaan Integrasi Data Baru</option>
+<option value="bug">Laporan Masalah Tampilan</option>
+<option value="kerjasama">Analisis Sentimen Data</option>
+</select>
+                </div>
+                <div>
+                    <label for="detail_pesan">Detail Pesan</label>
+                    <textarea id="detail_pesan" name="detail_pesan" rows="5" required></textarea>
+                </div>
+                <div>
+                    <button type="submit">Kirim Masukan</button>
+                </div>
+            </form>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Pidatoku. Proyek Mata Kuliah Pemrograman Web.</p>
+        <ul>
+            <li><a href="#live-monitor">Kembali ke Atas</a></li>
+            <li><a href="https://github.com/Blanchette756/PIDATOKU" target="_blank" rel="noopener noreferrer">Repositori PIDATOKU</a></li>
+        </ul>
+    </footer>
+
+</body>
+
+</html>
