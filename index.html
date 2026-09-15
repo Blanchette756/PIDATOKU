@@ -5,118 +5,133 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pidatoku - Pantau Pidato Presiden & Sentimen Pasar</title>
-    <style>
-        form div {
-            margin-bottom: 10px;
-        }
-        
-        label {
-            display: inline-block;
-            width: 100%;
-            vertical-align: top;
-        }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
     <header>
-        <a href="#main">Lewati ke konten utama</a>
-        <h1>Pidatoku</h1>
-        <p>Platform Pemantauan Pidato Kenegaraan dan Pergerakan IHSG & Kurs IDR/USD</p>
-        <nav aria-label="Navigasi utama">
-            <ul>
-                <li><a href="#live-monitor">Live Monitor</a></li>
-                <li><a href="#arsip-pidato">Arsip Data</a></li>
-                <li><a href="#live-stream.html">Buka Mode Fullscreen</a></li>
-                <li><a href="#kontak">Beri Masukan</a></li>
-            </ul>
-        </nav>
+        <div class="container nav-wrapper">
+            <div>
+                <h1>Pidatoku</h1>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Platform Pantau Pidato & Sentimen Finansial</p>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#live-monitor">Live Monitor</a></li>
+                    <li><a href="#arsip-pidato">Arsip Data</a></li>
+                    <li><a href="live-stream.html">Mode Fullscreen</a></li>
+                    <li><a href="#kontak">Beri Masukan</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
 
-    <main id="main">
+    <main id="main" class="container" style="margin-top: var(--space-4);">
 
         <section id="live-monitor">
-            <h2>Monitor Live Pidato & Pasar Finansial</h2>
-            <div>
-                <h3>Siaran Langsung Pidato Presiden</h3>
-                <img src="assets/live-placeholder.jpg" width="500" alt="Area pratinjau untuk pemutar video siaran langsung pidato kenegaraan">
-            </div>
-            <div>
-                <h3>Indikator Pasar Real-time</h3>
-                <div>
-                    <h4>IHSG (Indeks Harga Saham Gabungan)</h4>
-                    <p>Titik saat ini: 7.250,45</p>
+            <h2 class="section-title">Monitor Live Pidato & Pasar Finansial</h2>
+
+            <div class="hero-grid">
+                <div class="stream-box card">
+                    <h3>Siaran Langsung Pidato Presiden</h3>
+                    <img src="assets/live-placeholder.jpg" alt="Area pratinjau pemutar siaran langsung pidato kenegaraan" style="margin: var(--space-2) 0;">
+                    <a href="live-stream.html" class="btn">Buka Mode Layar Penuh</a>
                 </div>
-                <div>
-                    <h4>Kurs Rupiah ke Dolar AS</h4>
-                    <p>Nilai tukar: Rp 15.600</p>
+
+                <div class="market-box">
+                    <div class="card">
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">IHSG (Indeks Harga Saham Gabungan)</p>
+                        <div class="stat-val">7.250,45</div>
+                        <p style="color: var(--brand); font-size: 0.85rem; margin-top: 0.25rem;">▲ +0.8% selama pidato</p>
+                    </div>
+
+                    <div class="card">
+                        <p style="color: var(--text-muted); font-size: 0.9rem;">Kurs Rupiah ke Dolar AS</p>
+                        <div class="stat-val">Rp 15.600</div>
+                        <p style="color: #38bdf8; font-size: 0.85rem; margin-top: 0.25rem;">▲ Menguat 25 poin</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="arsip-pidato">
-            <h2>Arsip Pidato Historis & Dampak Pasar</h2>
-            <article>
-                <h3>Pidato RUU APBN 2027 dan Nota Keuangan</h3>
-                <p>Tanggal: 16 Agustus 2026</p>
-                <img src="assets/thumbnail-pidato1.jpg" width="300" alt="Presiden membacakan nota keuangan di gedung DPR">
-                <p>Ringkasan: Penjelasan mengenai fokus anggaran pemerintah pada sektor infrastruktur digital, ketahanan energi, dan hilirisasi industri teknologi.</p>
-                <div>
-                    <p>Pergerakan IHSG selama pidato: +0.8%</p>
-                    <p>Pergerakan Kurs selama pidato: Menguat 25 poin</p>
-                </div>
-            </article>
-            <article>
-                <h3>Pidato Kenegaraan Peringatan Kemerdekaan RI</h3>
-                <p>Tanggal: 17 Agustus 2026</p>
-                <img src="assets/thumbnail-pidato2.jpg" width="300" alt="Presiden memberikan amanat pada upacara kemerdekaan">
-                <p>Ringkasan: Penekanan pada geopolitik, kemandirian bangsa, dan strategi menghadapi tantangan ekonomi global.</p>
-                <div>
-                    <p>Pergerakan IHSG selama pidato: Pasar Libur</p>
-                    <p>Pergerakan Kurs selama pidato: Pasar Libur</p>
-                </div>
-            </article>
+        <section id="arsip-pidato" style="margin-top: var(--space-4);">
+            <h2 class="section-title">Arsip Pidato Historis & Dampak Pasar</h2>
+
+            <div class="cards-grid">
+                <article class="card">
+                    <img src="assets/thumbnail-pidato1.jpg" alt="Presiden membacakan nota keuangan di gedung DPR" style="margin-bottom: var(--space-2);">
+                    <h3>Pidato RUU APBN 2027</h3>
+                    <small style="color: var(--brand); display: block; margin-bottom: var(--space-1);">16 Agustus 2026</small>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--space-2);">
+                        Fokus anggaran belanja pemerintah diarahkan ke sektor kedaulatan digital, hilirisasi industri, dan ketahanan energi.
+                    </p>
+                    <div style="border-top: 1px solid var(--border); padding-top: var(--space-1); font-size: 0.85rem;">
+                        <p><strong>IHSG:</strong> +0.8%</p>
+                        <p><strong>Kurs IDR:</strong> Menguat 25 poin</p>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <img src="assets/thumbnail-pidato2.jpg" alt="Presiden memberikan amanat pada upacara kemerdekaan" style="margin-bottom: var(--space-2);">
+                    <h3>Pidato Kenegaraan HUT RI</h3>
+                    <small style="color: var(--brand); display: block; margin-bottom: var(--space-1);">17 Agustus 2026</small>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--space-2);">
+                        Penekanan arah geopolitik nasional, perlindungan rantai pasok ekonomi mikro, dan stabilitas cadangan devisa.
+                    </p>
+                    <div style="border-top: 1px solid var(--border); padding-top: var(--space-1); font-size: 0.85rem;">
+                        <p><strong>IHSG:</strong> Pasar Libur</p>
+                        <p><strong>Kurs IDR:</strong> Pasar Libur</p>
+                    </div>
+                </article>
+            </div>
         </section>
 
-        <section id="kontak">
-            <h2>Formulir Masukan & Permintaan Fitur</h2>
-            <p>Beri tahu kami data finansial atau analitik apa lagi yang ingin Anda lihat terintegrasi di platform ini.</p>
-            <form action="proses-masukan.php" method="POST">
-                <div>
+        <section id="kontak" style="margin-top: var(--space-4); max-width: 42rem;">
+            <h2 class="section-title">Formulir Masukan & Permintaan Fitur</h2>
+            <p style="color: var(--text-muted); margin-bottom: var(--space-3); font-size: 0.95rem;">
+                Beri tahu kami data finansial atau analitik apa lagi yang ingin Anda lihat terintegrasi di platform ini.
+            </p>
+
+            <form action="proses-masukan.php" method="POST" class="card">
+                <div class="form-group">
                     <label for="nama_lengkap">Nama Lengkap</label>
                     <input type="text" id="nama_lengkap" name="nama_lengkap" required>
                 </div>
-                <div>
+
+                <div class="form-group">
                     <label for="email_pengguna">Alamat Email</label>
                     <input type="email" id="email_pengguna" name="email_pengguna" required>
                 </div>
-                <div>
-                    <label for="kategori_masukan">Kategori</label>
+
+                <div class="form-group">
+                    <label for="kategori_masukan">Kategori Masukan</label>
                     <select id="kategori_masukan" name="kategori_masukan">
-<option value="fitur">Permintaan Integrasi Data Baru</option>
-<option value="bug">Laporan Masalah Tampilan</option>
-<option value="kerjasama">Analisis Sentimen Data</option>
-</select>
+                        <option value="fitur">Permintaan Integrasi Data Baru</option>
+                        <option value="bug">Laporan Masalah Tampilan</option>
+                        <option value="kerjasama">Analisis Sentimen Data</option>
+                    </select>
                 </div>
-                <div>
+
+                <div class="form-group">
                     <label for="detail_pesan">Detail Pesan</label>
-                    <textarea id="detail_pesan" name="detail_pesan" rows="5" required></textarea>
+                    <textarea id="detail_pesan" name="detail_pesan" rows="4" required></textarea>
                 </div>
-                <div>
-                    <button type="submit">Kirim Masukan</button>
-                </div>
+
+                <button type="submit" class="btn">Kirim Masukan</button>
             </form>
         </section>
 
     </main>
 
     <footer>
-        <p>&copy; 2026 Pidatoku. Mata Kuliah Pemrograman Web.</p>
-        <ul>
-            <li><a href="#live-monitor">Kembali ke Atas</a></li>
-            <li><a href="https://github.com/Blanchette756/PIDATOKU" target="_blank" rel="noopener noreferrer">Repositori PIDATOKU</a></li>
-        </ul>
+        <div class="container" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-2);">
+            <p>&copy; 2026 Pidatoku. Mata Kuliah Pemrograman Web.</p>
+            <ul style="display: flex; gap: var(--space-2); list-style: none;">
+                <li><a href="#live-monitor" style="color: var(--text-muted); text-decoration: none;">Kembali ke Atas</a></li>
+                <li><a href="https://github.com/Blanchette756/PIDATOKU" target="_blank" rel="noopener noreferrer" style="color: var(--brand); text-decoration: none;">Repositori GitHub</a></li>
+            </ul>
+        </div>
     </footer>
 
 </body>
