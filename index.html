@@ -14,7 +14,7 @@
         <span class="ticker-badge">SIARAN LANGSUNG</span>
         <span class="ticker-title">PUSAT DATA FINANSIAL PRESIDEN</span>
         <div class="ticker-marquee" aria-hidden="true">
-            <span>IHSG: 7.250,45 ▲ +0,8% | Kurs IDR: Rp15.600 ▲ +25 poin | Status: Siaran Langsung Istana Negara | IHSG: 7.250,45 ▲ +0,8% | Kurs IDR: Rp15.600 ▲ +25 poin | Status: Siaran Langsung Istana Negara</span>
+            <span>Grafik IHSG harian | Kurs referensi harian | Siaran langsung dari Istana Negara</span>
         </div>
     </div>
 
@@ -64,65 +64,54 @@
 
                 <div class="channel-card card">
                     <div class="channel-header">
-                        <span class="channel-badge realtime">DATA REAL-TIME</span>
+                        <span class="channel-badge market">DATA PASAR</span>
                         <span class="channel-number">SALURAN 02</span>
                     </div>
-                    <h3 class="channel-title">Pantau Sentimen IHSG & Kurs Rupiah 24/7</h3>
+                    <h3 class="channel-title">IHSG & Nilai Tukar Rupiah</h3>
 
                     <div class="market-grid">
-                        <div class="market-card card">
-                            <div class="market-header">
-                                <span class="market-indicator positive" aria-label="IHSG naik"></span>
-                                <h4>IHSG</h4>
+                        <section class="market-card card market-chart-card" aria-labelledby="ihsg-chart-title">
+                            <div class="market-panel-header">
+                                <div>
+                                    <p class="market-eyebrow">INDEKS HARGA SAHAM GABUNGAN</p>
+                                    <h4 id="ihsg-chart-title">IHSG <span>Tren harian</span></h4>
+                                </div>
+                                <span class="market-session">Harian</span>
+                            </div>
+                            <div class="ihsg-chart-frame">
+                                <div class="tradingview-widget-container" id="ihsg-chart">
+                                    <div class="tradingview-widget-container__widget"></div>
+                                </div>
+                            </div>
+                            <p class="market-source">Sumber: TradingView. Data IHSG tersedia pada interval harian, mingguan, dan bulanan.</p>
+                        </section>
+
+                        <section class="market-card card currency-card" aria-labelledby="currency-title">
+                            <div class="market-panel-header">
+                                <div>
+                                    <p class="market-eyebrow">KURS REFERENSI HARIAN</p>
+                                    <h4 id="currency-title">Nilai Rupiah</h4>
+                                </div>
+                                <div class="currency-picker">
+                                    <button class="currency-picker-button" id="currency-picker-button" type="button" aria-label="Cari mata uang" aria-expanded="false" aria-controls="currency-picker-menu">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                                <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+                                                <path d="m16 16 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                                            </svg>
+                                        </button>
+                                    <div class="currency-picker-menu" id="currency-picker-menu" hidden>
+                                        <label class="sr-only" for="currency-search">Cari kode atau nama mata uang</label>
+                                        <input type="search" id="currency-search" placeholder="Cari mata uang..." autocomplete="off" aria-controls="currency-options">
+                                        <div class="currency-options" id="currency-options" role="listbox" aria-label="Mata uang tersedia"></div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="market-value">
-                                <span class="stat-val" id="ihsg-value">7.250,45</span>
-                                <span class="stat-change positive" id="ihsg-change">▲ +0,8% (0,00%)</span>
+                                <span class="stat-val" id="fx-rate-value">Memuat kurs...</span>
+                                <span class="stat-change" id="fx-pair-label">1 USD = ... IDR</span>
                             </div>
-                            <p class="market-label">Indeks Harga Saham Gabungan</p>
-                            <div class="sparkline" id="ihsg-sparkline" role="img" aria-label="Grafik pergerakan IHSG 1 hari"></div>
-                        </div>
-
-                        <div class="market-card card">
-                            <div class="market-header">
-                                <span class="market-indicator positive" aria-label="Kurs menguat"></span>
-                                <h4>USD/IDR</h4>
-                            </div>
-                            <div class="market-value">
-                                <span class="stat-val" id="usd-value">15.600</span>
-                                <span class="stat-change positive" id="usd-change">▲ +25 poin (+0,16%)</span>
-                            </div>
-                            <p class="market-label">Kurs Rupiah per Dolar AS</p>
-                            <div class="sparkline" id="usd-sparkline" role="img" aria-label="Grafik pergerakan USD/IDR 1 hari"></div>
-                        </div>
-                    </div>
-
-                    <div class="sentiment-summary">
-                        <h4>Ringkasan Sentimen Pasar</h4>
-                        <div class="sentiment-bars">
-                            <div class="sentiment-bar">
-                                <span class="sentiment-label">Positif</span>
-                                <div class="sentiment-track">
-                                    <div class="sentiment-fill positive" style="width: 62%"></div>
-                                </div>
-                                <span class="sentiment-pct">62%</span>
-                            </div>
-                            <div class="sentiment-bar">
-                                <span class="sentiment-label">Netral</span>
-                                <div class="sentiment-track">
-                                    <div class="sentiment-fill neutral" style="width: 28%"></div>
-                                </div>
-                                <span class="sentiment-pct">28%</span>
-                            </div>
-                            <div class="sentiment-bar">
-                                <span class="sentiment-label">Negatif</span>
-                                <div class="sentiment-track">
-                                    <div class="sentiment-fill negative" style="width: 10%"></div>
-                                </div>
-                                <span class="sentiment-pct">10%</span>
-                            </div>
-                        </div>
-                        <p class="sentiment-note">Berdasarkan analisis kata kunci pidato real-time</p>
+                            <p class="market-label" id="fx-rate-meta" role="status" aria-live="polite">Mengambil kurs referensi harian...</p>
+                        </section>
                     </div>
                 </div>
             </div>
