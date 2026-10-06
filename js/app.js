@@ -1,4 +1,5 @@
 import { formatAngka, filterPidatoByKategori, hitungRataRataIHSG } from './utils.js';
+import { inisialisasiFormValidasi } from './form-validasi.js';
 
 const endpointFrankfurter = 'https://api.frankfurter.dev/v2';
 const mataUangUtama = ['USD', 'EUR', 'JPY', 'GBP', 'SGD', 'AUD', 'CNY'];
@@ -255,4 +256,5 @@ function inisialisasiPasar() {
 document.addEventListener('DOMContentLoaded', () => {
     inisialisasiAplikasi();
     inisialisasiPasar();
+    inisialisasiFormValidasi();
 });

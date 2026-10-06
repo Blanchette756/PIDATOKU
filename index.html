@@ -171,32 +171,45 @@
             <h2 id="kontak-title" class="section-title">Formulir Masukan & Permintaan Fitur</h2>
             <p class="section-desc">Beri tahu kami data finansial atau analitik apa lagi yang ingin Anda lihat terintegrasi di platform ini.</p>
 
-            <form action="proses-masukan.php" method="POST" class="card contact-form">
+            <div id="ringkasan-error" class="error-summary" role="alert" aria-live="polite" hidden>
+                <p class="error-summary-title">Terdapat kesalahan pada isian berikut:</p>
+                <ul id="daftar-error"></ul>
+            </div>
+
+            <form id="form-masukan" action="proses-masukan.php" method="POST" class="card contact-form" novalidate>
                 <div class="form-group">
                     <label for="nama_lengkap">Nama Lengkap</label>
-                    <input type="text" id="nama_lengkap" name="nama_lengkap" required autocomplete="name">
+                    <input type="text" id="nama_lengkap" name="nama_lengkap" required autocomplete="name" aria-describedby="error-nama_lengkap">
+                    <span id="error-nama_lengkap" class="field-error" aria-live="polite"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="email_pengguna">Alamat Email</label>
-                    <input type="email" id="email_pengguna" name="email_pengguna" required autocomplete="email">
+                    <input type="email" id="email_pengguna" name="email_pengguna" required autocomplete="email" aria-describedby="error-email_pengguna">
+                    <span id="error-email_pengguna" class="field-error" aria-live="polite"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="kategori_masukan">Kategori Masukan</label>
-                    <select id="kategori_masukan" name="kategori_masukan">
+                    <select id="kategori_masukan" name="kategori_masukan" aria-describedby="error-kategori_masukan">
+                        <option value="">— Pilih kategori —</option>
                         <option value="fitur">Permintaan Integrasi Data Baru</option>
                         <option value="bug">Laporan Masalah Tampilan</option>
                         <option value="kerjasama">Analisis Sentimen Data</option>
                     </select>
+                    <span id="error-kategori_masukan" class="field-error" aria-live="polite"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="detail_pesan">Detail Pesan</label>
-                    <textarea id="detail_pesan" name="detail_pesan" rows="4" required></textarea>
+                    <textarea id="detail_pesan" name="detail_pesan" rows="4" required aria-describedby="error-detail_pesan"></textarea>
+                    <span id="error-detail_pesan" class="field-error" aria-live="polite"></span>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Kirim Masukan</button>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Kirim Masukan</button>
+                    <span id="draft-status" class="draft-indicator" aria-live="polite"></span>
+                </div>
             </form>
         </section>
 
