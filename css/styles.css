@@ -566,6 +566,23 @@ nav a:hover {
     background-color: var(--brand);
 }
 
+.btn-retry {
+    background-color: var(--bg-elevated);
+    color: var(--text);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    min-height: 2.2rem;
+    padding: 0.35rem 0.8rem;
+    margin-top: 0.6rem;
+    align-self: flex-start;
+}
+
+.btn-retry:hover {
+    background-color: var(--bg-card);
+    border-color: var(--accent-gold);
+    color: var(--accent-gold);
+}
+
 .contact-form {
     max-width: 42rem;
     box-shadow: var(--shadow);
@@ -717,16 +734,20 @@ footer {
     .nav-wrapper {
         justify-content: center;
     }
+
     .brand {
         width: 100%;
         text-align: center;
     }
+
     nav ul {
         justify-content: center;
     }
+
     .market-grid {
         grid-template-columns: minmax(0, 1fr);
     }
+
     .ihsg-chart-frame {
         height: 290px;
     }
@@ -736,25 +757,32 @@ footer {
     .container {
         width: min(100% - 1.5rem, 78rem);
     }
+
     .ticker-title {
         display: none;
     }
+
     nav ul {
         gap: 0.15rem;
     }
+
     nav a {
         padding: 0.45rem 0.5rem;
         font-size: 0.75rem;
     }
+
     .market-grid {
         gap: 0.75rem;
     }
+
     .market-card {
         padding: 0.8rem;
     }
+
     .ihsg-chart-frame {
         height: 250px;
     }
+
     .speech-impact {
         flex-direction: column;
         gap: 0.5rem;

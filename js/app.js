@@ -142,30 +142,53 @@ function inisialisasiPemilihMataUang(elemenMataUang) {
         elemenMataUang.nilai.textContent = 'Memuat kurs...';
         elemenMataUang.pasangan.textContent = `1 ${kodeMataUang} = ... IDR`;
         elemenMataUang.status.textContent = 'Mengambil kurs referensi harian...';
+        if (elemenMataUang.tombolRetry) elemenMataUang.tombolRetry.hidden = true;
 
         try {
             const respons = await fetch(`${endpointFrankfurter}/rate/${kodeMataUang}/IDR`);
-            if (!respons.ok) throw new Error('Kurs tidak tersedia untuk pasangan ini.');
+            if (!respons.ok) throw new Error(`HTTP ${respons.status}`);
 
             const data = await respons.json();
-            const nilaiKurs = new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                maximumFractionDigits: 0
-            }).format(data.rate);
-            const tanggal = new Intl.DateTimeFormat('id-ID', {
-                dateStyle: 'medium',
-                timeZone: 'UTC'
-            }).format(new Date(`${data.date}T12:00:00Z`));
-
-            elemenMataUang.nilai.textContent = nilaiKurs;
-            elemenMataUang.pasangan.textContent = `1 ${data.base} = ${nilaiKurs}`;
-            elemenMataUang.status.textContent = `Kurs acuan harian, ${tanggal}. Sumber: Frankfurter.`;
+            tampilkanDataKurs(data, 'Frankfurter');
         } catch (error) {
+            console.warn('Gagal memuat kurs dari API publik:', error.message);
+
+            try {
+                const responsLokal = await fetch('./data/rates-fallback.json');
+                if (!responsLokal.ok) throw new Error(`HTTP ${responsLokal.status}`);
+                const dataLokal = await responsLokal.json();
+
+                if (dataLokal[kodeMataUang]) {
+                    tampilkanDataKurs(dataLokal[kodeMataUang], 'Cadangan Lokal');
+                    return;
+                }
+            } catch (errFallback) {
+                console.warn('Data cadangan lokal tidak tersedia:', errFallback.message);
+            }
+
             elemenMataUang.nilai.textContent = 'Kurs tidak tersedia';
             elemenMataUang.pasangan.textContent = `${kodeMataUang}/IDR`;
-            elemenMataUang.status.textContent = 'Data kurs gagal dimuat. Periksa koneksi lalu coba lagi.';
+            elemenMataUang.status.textContent = 'Gagal memuat kurs. Periksa koneksi internet atau coba lagi.';
+            if (elemenMataUang.tombolRetry) elemenMataUang.tombolRetry.hidden = false;
         }
+    }
+
+    function tampilkanDataKurs(data, sumberLabel) {
+        const nilaiKurs = new Intl.NumberFormat('id-ID', {
+            style: 'currency',
+            currency: 'IDR',
+            maximumFractionDigits: 0
+        }).format(data.rate);
+
+        const tanggal = new Intl.DateTimeFormat('id-ID', {
+            dateStyle: 'medium',
+            timeZone: 'UTC'
+        }).format(new Date(`${data.date}T12:00:00Z`));
+
+        elemenMataUang.nilai.textContent = nilaiKurs;
+        elemenMataUang.pasangan.textContent = `1 ${data.base} = ${nilaiKurs}`;
+        elemenMataUang.status.textContent = `Kurs acuan harian, ${tanggal}. Sumber: ${sumberLabel}.`;
+        if (elemenMataUang.tombolRetry) elemenMataUang.tombolRetry.hidden = true;
     }
 
     async function muatDaftarMataUang() {
@@ -173,11 +196,24 @@ function inisialisasiPemilihMataUang(elemenMataUang) {
 
         try {
             const respons = await fetch(`${endpointFrankfurter}/currencies`);
-            if (!respons.ok) throw new Error('Daftar mata uang gagal dimuat.');
+            if (!respons.ok) throw new Error(`HTTP ${respons.status}`);
 
             state.daftarMataUang = await respons.json();
             tampilkanPilihan(elemenMataUang.pencarian.value);
         } catch (error) {
+            console.warn('Gagal memuat daftar mata uang dari API:', error.message);
+
+            try {
+                const responsLokal = await fetch('./data/currencies.json');
+                if (responsLokal.ok) {
+                    state.daftarMataUang = await responsLokal.json();
+                    tampilkanPilihan(elemenMataUang.pencarian.value);
+                    return;
+                }
+            } catch (errLokal) {
+                console.warn('Fallback mata uang lokal gagal:', errLokal.message);
+            }
+
             elemenMataUang.pilihan.textContent = 'Daftar mata uang gagal dimuat.';
         }
     }
@@ -233,6 +269,12 @@ function inisialisasiPemilihMataUang(elemenMataUang) {
         if (!peristiwa.target.closest('.currency-picker')) aturMenu(false);
     });
 
+    if (elemenMataUang.tombolRetry) {
+        elemenMataUang.tombolRetry.addEventListener('click', () => {
+            muatKurs(state.mataUangTerpilih);
+        });
+    }
+
     bacaMataUangTersimpan();
     muatKurs(state.mataUangTerpilih);
     muatDaftarMataUang();
@@ -246,7 +288,8 @@ function inisialisasiPasar() {
         pilihan: document.getElementById('currency-options'),
         nilai: document.getElementById('fx-rate-value'),
         pasangan: document.getElementById('fx-pair-label'),
-        status: document.getElementById('fx-rate-meta')
+        status: document.getElementById('fx-rate-meta'),
+        tombolRetry: document.getElementById('fx-retry-button')
     };
 
     muatGrafikIHSG();
