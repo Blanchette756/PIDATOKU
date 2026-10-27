@@ -296,8 +296,49 @@ function inisialisasiPasar() {
     inisialisasiPemilihMataUang(elemenMataUang);
 }
 
+function inisialisasiPlayerSiaran() {
+    const kontainer = document.querySelector('.stream-container');
+    if (!kontainer) return;
+
+    kontainer.style.cursor = 'pointer';
+    kontainer.setAttribute('role', 'button');
+    kontainer.setAttribute('tabindex', '0');
+    kontainer.setAttribute('aria-label', 'Putar siaran pidato kenegaraan');
+
+    async function putarSiaran() {
+        let urlVideo = 'https://www.youtube.com/embed?listType=search&list=Sekretariat+Presiden+Pidato+Kenegaraan&autoplay=1';
+
+        try {
+            const respons = await fetch('./api/live-stream.php');
+            if (respons.ok) {
+                const hasil = await respons.json();
+                if (hasil && hasil.data && hasil.data.url_video) {
+                    urlVideo = hasil.data.url_video + '?autoplay=1';
+                }
+                const judul = document.querySelector('.channel-title');
+                if (judul && hasil && hasil.data && hasil.data.judul) {
+                    judul.textContent = hasil.data.judul;
+                }
+            }
+        } catch (err) {
+            console.warn('Gagal memuat data API siaran:', err);
+        }
+
+        kontainer.innerHTML = '<iframe src="' + urlVideo + '" title="Siaran Pidato Kenegaraan" style="width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+    }
+
+    kontainer.addEventListener('click', putarSiaran, { once: true });
+    kontainer.addEventListener('keydown', (peristiwa) => {
+        if (peristiwa.key === 'Enter' || peristiwa.key === ' ') {
+            peristiwa.preventDefault();
+            putarSiaran();
+        }
+    }, { once: true });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     inisialisasiAplikasi();
     inisialisasiPasar();
+    inisialisasiPlayerSiaran();
     inisialisasiFormValidasi();
 });
