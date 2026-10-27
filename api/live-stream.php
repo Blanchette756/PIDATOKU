@@ -4,6 +4,14 @@ declare(strict_types=1);
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+    if (class_exists(\Dotenv\Dotenv::class) && file_exists(__DIR__ . '/../.env')) {
+        $dotenv = \Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+        $dotenv->safeLoad();
+    }
+}
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($method === 'OPTIONS') {
@@ -17,7 +25,7 @@ if ($method === 'OPTIONS') {
 function deteksiSiaranLangsung(): array {
     $cadanganId = 'V5dWnSPEruY';
     $cadanganJudul = 'Pidato Presiden Prabowo Subianto: Sidang Kabinet Paripurna 2026';
-    $channelId = 'UC_m_NBgf7ieJBHzb6vvJC5A';
+    $channelId = $_ENV['YOUTUBE_CHANNEL_ID'] ?? 'UC_m_NBgf7ieJBHzb6vvJC5A';
 
     $hasil = [
         'is_live' => false,
