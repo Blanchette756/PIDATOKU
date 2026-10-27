@@ -298,6 +298,7 @@ function inisialisasiPasar() {
 
 function inisialisasiPlayerSiaran() {
     const kontainer = document.querySelector('.stream-container');
+    const tombolPlay = document.getElementById('btn-play-stream');
     if (!kontainer) return;
 
     kontainer.style.cursor = 'pointer';
@@ -305,19 +306,29 @@ function inisialisasiPlayerSiaran() {
     kontainer.setAttribute('tabindex', '0');
     kontainer.setAttribute('aria-label', 'Putar siaran pidato kenegaraan');
 
+    let sedangMemuat = false;
+
     async function putarSiaran() {
-        let urlVideo = 'https://www.youtube.com/embed?listType=search&list=Sekretariat+Presiden+Pidato+Kenegaraan&autoplay=1';
+        if (sedangMemuat) return;
+        sedangMemuat = true;
+
+        let urlVideo = 'https://www.youtube-nocookie.com/embed/V5dWnSPEruY';
 
         try {
             const respons = await fetch('./api/live-stream.php');
             if (respons.ok) {
                 const hasil = await respons.json();
                 if (hasil && hasil.data && hasil.data.url_video) {
-                    urlVideo = hasil.data.url_video + '?autoplay=1';
+                    const pemisah = hasil.data.url_video.includes('?') ? '&' : '?';
+                    urlVideo = hasil.data.url_video + pemisah + 'autoplay=1';
                 }
                 const judul = document.querySelector('.channel-title');
                 if (judul && hasil && hasil.data && hasil.data.judul) {
                     judul.textContent = hasil.data.judul;
+                }
+                const badge = document.querySelector('.channel-badge.live');
+                if (badge && hasil && hasil.data && hasil.data.badge) {
+                    badge.textContent = hasil.data.badge;
                 }
             }
         } catch (err) {
@@ -325,9 +336,17 @@ function inisialisasiPlayerSiaran() {
         }
 
         kontainer.innerHTML = '<iframe src="' + urlVideo + '" title="Siaran Pidato Kenegaraan" style="width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+
+        if (tombolPlay) {
+            tombolPlay.textContent = 'Siaran Sedang Berjalan';
+            tombolPlay.disabled = true;
+        }
     }
 
     kontainer.addEventListener('click', putarSiaran, { once: true });
+    if (tombolPlay) {
+        tombolPlay.addEventListener('click', putarSiaran, { once: true });
+    }
     kontainer.addEventListener('keydown', (peristiwa) => {
         if (peristiwa.key === 'Enter' || peristiwa.key === ' ') {
             peristiwa.preventDefault();

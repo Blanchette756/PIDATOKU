@@ -14,24 +14,77 @@ if ($method === 'OPTIONS') {
     exit;
 }
 
+function deteksiSiaranLangsung(): array {
+    $cadanganId = 'V5dWnSPEruY';
+    $cadanganJudul = 'Pidato Presiden Prabowo Subianto: Sidang Kabinet Paripurna 2026';
+    $channelId = 'UC_m_NBgf7ieJBHzb6vvJC5A';
+
+    $hasil = [
+        'is_live' => false,
+        'status_siaran' => 'REKAMAN',
+        'badge' => 'REKAMAN TERKINI',
+        'video_id' => $cadanganId,
+        'judul' => $cadanganJudul,
+        'url_video' => 'https://www.youtube-nocookie.com/embed/' . $cadanganId,
+        'topik' => 'Evaluasi Kinerja Pemerintah & Ketahanan Ekonomi Nasional',
+        'sumber' => 'Kompas TV / Sekretariat Presiden'
+    ];
+
+    $konteks = stream_context_create([
+        'http' => [
+            'timeout' => 3,
+            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        ]
+    ]);
+
+    $konten = @file_get_contents('https://www.youtube.com/channel/' . $channelId . '/live', false, $konteks);
+
+    if ($konten !== false) {
+        $sedangLive = str_contains($konten, '"isLive":true') || str_contains($konten, '"status":"LIVE"');
+        if ($sedangLive) {
+            if (preg_match('/"videoId":"([a-zA-Z0-9_-]{11})"/', $konten, $cocokVideo)) {
+                $hasil['is_live'] = true;
+                $hasil['status_siaran'] = 'LIVE';
+                $hasil['badge'] = 'SIARAN LANGSUNG';
+                $hasil['video_id'] = $cocokVideo[1];
+                $hasil['url_video'] = 'https://www.youtube-nocookie.com/embed/' . $cocokVideo[1];
+                $hasil['sumber'] = 'Sekretariat Presiden (Live Stream)';
+                $hasil['topik'] = 'Pidato Kenegaraan / Arahan Presiden Terkini';
+
+                if (preg_match('/<title>(.*?) - YouTube<\/title>/', $konten, $cocokJudul)) {
+                    $hasil['judul'] = html_entity_decode(trim($cocokJudul[1]), ENT_QUOTES, 'UTF-8');
+                } else {
+                    $hasil['judul'] = 'Siaran Langsung Pidato Presiden Republik Indonesia';
+                }
+            }
+        }
+    }
+
+    return $hasil;
+}
+
 if ($method === 'GET') {
+    $infoSiaran = deteksiSiaranLangsung();
+
     http_response_code(200);
     echo json_encode([
         'status' => 'success',
         'code' => 200,
-        'pesan' => 'Data siaran langsung berhasil diambil',
+        'pesan' => 'Data siaran berhasil diperbarui secara otomatis',
         'data' => [
-            'id' => 'live-01',
-            'status_siaran' => 'LIVE',
-            'judul' => 'Siaran Pidato Kenegaraan Istana Negara',
-            'topik' => 'RUU APBN 2027 dan Arah Kebijakan Ekonomi Nasional',
-            'pembicara' => 'Presiden Republik Indonesia',
-            'lokasi' => 'Gedung Nusantara, Kompleks Parlemen, Jakarta',
-            'sumber' => 'TVRI / Sekretariat Presiden',
+            'id' => 'stream-presiden',
+            'is_live' => $infoSiaran['is_live'],
+            'status_siaran' => $infoSiaran['status_siaran'],
+            'badge' => $infoSiaran['badge'],
+            'judul' => $infoSiaran['judul'],
+            'topik' => $infoSiaran['topik'],
+            'pembicara' => 'Presiden Republik Indonesia (Prabowo Subianto)',
+            'lokasi' => 'Istana Negara, Jakarta',
+            'sumber' => $infoSiaran['sumber'],
             'format' => 'Video HD 1080p',
-            'url_video' => 'https://www.youtube-nocookie.com/embed/live_stream',
-            'waktu_mulai' => date('Y-m-d') . 'T09:00:00+07:00',
-            'jumlah_pemirsa' => 14820,
+            'video_id' => $infoSiaran['video_id'],
+            'url_video' => $infoSiaran['url_video'],
+            'waktu_cek' => date('c'),
             'indikator_pasar' => [
                 'pantau_ihsg' => true,
                 'pantau_kurs' => true
@@ -115,4 +168,3 @@ echo json_encode([
     'pesan' => 'Method tidak diizinkan. Gunakan GET atau POST.'
 ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 exit;
-

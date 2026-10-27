@@ -10,29 +10,26 @@
 
 <body>
 
-    <div class="ticker-bar" role="status" aria-live="polite">
+    <aside class="ticker-bar" role="status" aria-live="polite">
         <span class="ticker-badge">SIARAN LANGSUNG</span>
         <span class="ticker-title">PUSAT DATA FINANSIAL PRESIDEN</span>
-        <div class="ticker-marquee" aria-hidden="true">
+        <p class="ticker-marquee" aria-hidden="true">
             <span>Grafik IHSG harian | Kurs referensi harian | Siaran langsung dari Istana Negara</span>
-        </div>
-    </div>
+        </p>
+    </aside>
 
     <header>
-        <div class="container nav-wrapper">
-            <div class="brand">
+        <nav class="container nav-wrapper" aria-label="Navigasi Utama">
+            <hgroup class="brand">
                 <h1>Pidatoku</h1>
                 <p class="tagline">Platform Pantau Pidato & Sentimen Finansial</p>
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#live-monitor">Monitor Langsung</a></li>
-                    <li><a href="#arsip-pidato">Arsip Data</a></li>
-                    <li><a href="live-stream.html">Mode Layar Penuh</a></li>
-                    <li><a href="#kontak">Beri Masukan</a></li>
-                </ul>
-            </nav>
-        </div>
+            </hgroup>
+            <ul>
+                <li><a href="#live-monitor">Monitor Langsung</a></li>
+                <li><a href="#arsip-pidato">Arsip Data</a></li>
+                <li><a href="#kontak">Beri Masukan</a></li>
+            </ul>
+        </nav>
     </header>
 
     <main id="main" class="container">
@@ -40,193 +37,195 @@
         <section id="live-monitor" aria-labelledby="live-monitor-title">
             <h2 id="live-monitor-title" class="section-title">Monitor Langsung Pidato & Pasar Finansial</h2>
 
-            <div class="hero-grid dual-channel">
-                <div class="channel-card card">
-                    <div class="channel-header">
+            <section class="hero-grid dual-channel">
+                <article class="channel-card card">
+                    <header class="channel-header">
                         <span class="channel-badge live">LANGSUNG</span>
                         <span class="channel-number">SALURAN 01</span>
-                    </div>
+                    </header>
                     <h3 class="channel-title">Siaran Pidato Kenegaraan Istana Negara</h3>
-                    <div class="stream-container">
+                    <figure class="stream-container" id="stream-container">
                         <img src="assets/live-placeholder.jpg" alt="Siaran langsung pidato kenegaraan dari Istana Negara" class="stream-preview">
-                        <div class="stream-overlay" aria-hidden="true">
+                        <span class="stream-overlay" aria-hidden="true">
                             <svg class="play-icon" viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
                                 <polygon points="5,3 19,12 5,21"></polygon>
                             </svg>
-                        </div>
-                    </div>
-                    <div class="channel-meta">
+                        </span>
+                    </figure>
+                    <footer class="channel-meta">
                         <span class="meta-item"><strong>Sumber:</strong> TVRI / Sekretariat Kabinet</span>
                         <span class="meta-item"><strong>Format:</strong> Video HD 1080p</span>
-                    </div>
-                    <a href="live-stream.html" class="btn btn-primary">Buka Mode Layar Penuh</a>
-                </div>
+                    </footer>
+                    <button type="button" class="btn btn-primary" id="btn-play-stream">Putar Siaran Langsung</button>
+                </article>
 
-                <div class="channel-card card">
-                    <div class="channel-header">
+                <article class="channel-card card">
+                    <header class="channel-header">
                         <span class="channel-badge market">DATA PASAR</span>
                         <span class="channel-number">SALURAN 02</span>
-                    </div>
+                    </header>
                     <h3 class="channel-title">IHSG & Nilai Tukar Rupiah</h3>
 
-                    <div class="market-grid">
+                    <section class="market-grid">
                         <section class="market-card card market-chart-card" aria-labelledby="ihsg-chart-title">
-                            <div class="market-panel-header">
-                                <div>
+                            <header class="market-panel-header">
+                                <hgroup>
                                     <p class="market-eyebrow">INDEKS HARGA SAHAM GABUNGAN</p>
                                     <h4 id="ihsg-chart-title">IHSG <span>Tren harian</span></h4>
-                                </div>
+                                </hgroup>
                                 <span class="market-session">Harian</span>
-                            </div>
-                            <div class="ihsg-chart-frame">
+                            </header>
+                            <figure class="ihsg-chart-frame">
                                 <div class="tradingview-widget-container" id="ihsg-chart">
                                     <div class="tradingview-widget-container__widget"></div>
                                 </div>
-                            </div>
+                            </figure>
                             <p class="market-source">Sumber: TradingView. Data IHSG tersedia pada interval harian, mingguan, dan bulanan.</p>
                         </section>
 
                         <section class="market-card card currency-card" aria-labelledby="currency-title">
-                            <div class="market-panel-header">
-                                <div>
+                            <header class="market-panel-header">
+                                <hgroup>
                                     <p class="market-eyebrow">KURS REFERENSI HARIAN</p>
                                     <h4 id="currency-title">Nilai Rupiah</h4>
-                                </div>
-                                <div class="currency-picker">
+                                </hgroup>
+                                <section class="currency-picker">
                                     <button class="currency-picker-button" id="currency-picker-button" type="button" aria-label="Cari mata uang" aria-expanded="false" aria-controls="currency-picker-menu">
-                                            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                                                <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
-                                                <path d="m16 16 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-                                            </svg>
-                                        </button>
-                                    <div class="currency-picker-menu" id="currency-picker-menu" hidden>
+                                        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                                            <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
+                                            <path d="m16 16 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                                        </svg>
+                                    </button>
+                                    <menu class="currency-picker-menu" id="currency-picker-menu" hidden>
                                         <label class="sr-only" for="currency-search">Cari kode atau nama mata uang</label>
                                         <input type="search" id="currency-search" placeholder="Cari mata uang..." autocomplete="off" aria-controls="currency-options">
-                                        <div class="currency-options" id="currency-options" role="listbox" aria-label="Mata uang tersedia"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="market-value">
+                                        <ul class="currency-options" id="currency-options" role="listbox" aria-label="Mata uang tersedia"></ul>
+                                    </menu>
+                                </section>
+                            </header>
+                            <p class="market-value">
                                 <span class="stat-val" id="fx-rate-value">Memuat kurs...</span>
                                 <span class="stat-change" id="fx-pair-label">1 USD = ... IDR</span>
-                            </div>
+                            </p>
                             <p class="market-label" id="fx-rate-meta" role="status" aria-live="polite">Mengambil kurs referensi harian...</p>
                             <button type="button" class="btn btn-retry" id="fx-retry-button" hidden>Coba Lagi</button>
                         </section>
-                    </div>
-                </div>
-            </div>
+                    </section>
+                </article>
+            </section>
         </section>
 
         <section id="arsip-pidato" aria-labelledby="arsip-title">
             <h2 id="arsip-title" class="section-title">Arsip Pidato Historis & Dampak Pasar</h2>
 
-            <div class="cards-grid">
+            <section class="cards-grid">
                 <article class="card">
                     <img src="assets/thumbnail-pidato1.jpg" alt="Presiden membacakan nota keuangan di gedung DPR" class="speech-thumbnail">
-                    <div class="speech-content">
-                        <div class="speech-meta">
+                    <section class="speech-content">
+                        <header class="speech-meta">
                             <span class="speech-badge">APBN 2027</span>
                             <time class="speech-date" datetime="2026-08-16">16 Agustus 2026</time>
-                        </div>
+                        </header>
                         <h3>Pidato RUU APBN 2027</h3>
                         <p class="speech-desc">Fokus anggaran belanja pemerintah diarahkan ke sektor kedaulatan digital, hilirisasi industri, dan ketahanan energi.</p>
-                        <div class="speech-impact">
-                            <div class="impact-item">
+                        <footer class="speech-impact">
+                            <span class="impact-item">
                                 <span class="impact-label">IHSG</span>
                                 <span class="impact-value positive">+0,8%</span>
-                            </div>
-                            <div class="impact-item">
+                            </span>
+                            <span class="impact-item">
                                 <span class="impact-label">Kurs IDR</span>
                                 <span class="impact-value positive">Menguat 25 poin</span>
-                            </div>
-                        </div>
-                    </div>
+                            </span>
+                        </footer>
+                    </section>
                 </article>
 
                 <article class="card">
                     <img src="assets/thumbnail-pidato2.jpg" alt="Presiden memberikan amanat pada upacara kemerdekaan" class="speech-thumbnail">
-                    <div class="speech-content">
-                        <div class="speech-meta">
+                    <section class="speech-content">
+                        <header class="speech-meta">
                             <span class="speech-badge">HUT RI</span>
                             <time class="speech-date" datetime="2026-08-17">17 Agustus 2026</time>
-                        </div>
+                        </header>
                         <h3>Pidato Kenegaraan HUT RI</h3>
                         <p class="speech-desc">Penekanan arah geopolitik nasional, perlindungan rantai pasok ekonomi mikro, dan stabilitas cadangan devisa.</p>
-                        <div class="speech-impact">
-                            <div class="impact-item">
+                        <footer class="speech-impact">
+                            <span class="impact-item">
                                 <span class="impact-label">IHSG</span>
                                 <span class="impact-value neutral">Pasar Libur</span>
-                            </div>
-                            <div class="impact-item">
+                            </span>
+                            <span class="impact-item">
                                 <span class="impact-label">Kurs IDR</span>
                                 <span class="impact-value neutral">Pasar Libur</span>
-                            </div>
-                        </div>
-                    </div>
+                            </span>
+                        </footer>
+                    </section>
                 </article>
-            </div>
+            </section>
         </section>
 
         <section id="kontak" aria-labelledby="kontak-title">
             <h2 id="kontak-title" class="section-title">Formulir Masukan & Permintaan Fitur</h2>
             <p class="section-desc">Beri tahu kami data finansial atau analitik apa lagi yang ingin Anda lihat terintegrasi di platform ini.</p>
 
-            <div id="ringkasan-error" class="error-summary" role="alert" aria-live="polite" hidden>
+            <aside id="ringkasan-error" class="error-summary" role="alert" aria-live="polite" hidden>
                 <p class="error-summary-title">Terdapat kesalahan pada isian berikut:</p>
                 <ul id="daftar-error"></ul>
-            </div>
+            </aside>
 
             <form id="form-masukan" action="proses-masukan.php" method="POST" class="card contact-form" novalidate>
-                <div class="form-group">
+                <p class="form-group">
                     <label for="nama_lengkap">Nama Lengkap</label>
                     <input type="text" id="nama_lengkap" name="nama_lengkap" required autocomplete="name" aria-describedby="error-nama_lengkap">
                     <span id="error-nama_lengkap" class="field-error" aria-live="polite"></span>
-                </div>
+                </p>
 
-                <div class="form-group">
+                <p class="form-group">
                     <label for="email_pengguna">Alamat Email</label>
                     <input type="email" id="email_pengguna" name="email_pengguna" required autocomplete="email" aria-describedby="error-email_pengguna">
                     <span id="error-email_pengguna" class="field-error" aria-live="polite"></span>
-                </div>
+                </p>
 
-                <div class="form-group">
+                <p class="form-group">
                     <label for="kategori_masukan">Kategori Masukan</label>
                     <select id="kategori_masukan" name="kategori_masukan" aria-describedby="error-kategori_masukan">
-                        <option value="">— Pilih kategori —</option>
+                        <option value="">Pilih kategori</option>
                         <option value="fitur">Permintaan Integrasi Data Baru</option>
                         <option value="bug">Laporan Masalah Tampilan</option>
                         <option value="kerjasama">Analisis Sentimen Data</option>
                     </select>
                     <span id="error-kategori_masukan" class="field-error" aria-live="polite"></span>
-                </div>
+                </p>
 
-                <div class="form-group">
+                <p class="form-group">
                     <label for="detail_pesan">Detail Pesan</label>
                     <textarea id="detail_pesan" name="detail_pesan" rows="4" required aria-describedby="error-detail_pesan"></textarea>
                     <span id="error-detail_pesan" class="field-error" aria-live="polite"></span>
-                </div>
+                </p>
 
-                <div class="form-actions">
+                <footer class="form-actions">
                     <button type="submit" class="btn btn-primary">Kirim Masukan</button>
                     <span id="draft-status" class="draft-indicator" aria-live="polite"></span>
-                </div>
+                </footer>
             </form>
         </section>
 
     </main>
 
     <footer>
-        <div class="container footer-content">
+        <section class="container footer-content">
             <p>&copy; 2026 Pidatoku. Mata Kuliah Pemrograman Web.</p>
             <ul class="footer-links">
                 <li><a href="#live-monitor">Kembali ke Atas</a></li>
                 <li><a href="https://github.com/Blanchette756/PIDATOKU" target="_blank" rel="noopener noreferrer">Repositori GitHub</a></li>
             </ul>
-        </div>
+        </section>
     </footer>
 
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/app.js?v=2"></script>
 </body>
+
+</html>
 
 </html>
