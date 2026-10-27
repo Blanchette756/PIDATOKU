@@ -1,56 +1,37 @@
 # PIDATOKU 🇮🇩
 
-Platform Pemantauan Sentimen Pasar Finansial (IHSG & Kurs IDR/USD) terhadap Pidato Kenegaraan.
-Proyek ini dikembangkan sebagai luaran Praktikum Pemrograman Web (Kurikulum OBE) - Program Studi Sarjana Teknik Komputer, Universitas Borneo Tarakan.
+Platform pemantauan sentimen pasar finansial (IHSG dan kurs IDR/USD) terhadap pidato kenegaraan. Dikembangkan untuk praktikum Pemrograman Web, Teknik Komputer, Universitas Borneo Tarakan.
 
-## 🪪 Identitas Pengembang
+## Identitas Mahasiswa
 * **Nama:** Rizky Rahmad Dani
-* **Program Studi:** Teknik Komputer
 * **NPM:** 2440304001
-* **Univ:** Universitas Borneo Tarakan
+* **Program Studi:** Teknik Komputer
+* **Kampus:** Universitas Borneo Tarakan
 
-## ✨ Pemenuhan Syarat Modul 2
-Proyek ini telah menerapkan standar pembuatan halaman web dasar sesuai modul, meliputi:
+## Fitur Halaman Web
+Halaman depan dibangun menggunakan HTML5 semantik dan standar aksesibilitas:
+* Struktur semantik: `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<figure>`, `<aside>`, `<form>`, dan `<footer>`.
+* Aksesibilitas: atribut `lang="id"`, urutan heading rapi (H1 sampai H4), teks `alt` pada gambar, dan label form yang terhubung ke input.
+* Mode pemutar video otomatis dengan layout responsif.
 
-**1. Struktur HTML5 Semantik**
-* `<header>` dan `<nav>` untuk bagian atas dan navigasi utama.
-* `<main>` sebagai pembungkus konten utama.
-* `<section>` (Terdapat 3 section: Live Monitor, Arsip Pidato, dan Form Kontak).
-* `<article>` digunakan di dalam arsip pidato dan kartu saluran monitor.
-* `<figure>` untuk media siaran langsung dan bingkai grafik.
-* `<aside>` untuk ticker bar dan ringkasan pesan error.
-* `<form>` untuk formulir masukan pengguna.
-* `<footer>` untuk penutup halaman.
+## Backend & REST API
+Layanan backend dibangun menggunakan PHP di Laragon 5:
+* **PHP:** Berjalan di PHP 8.4 / 8.3 dengan `declare(strict_types=1);`.
+* **Package Manager:** Composer dengan package `vlucas/phpdotenv`.
+* **Environment:** Pengaturan tersimpan di file `.env` dan `.env.example` (diamankan lewat `.gitignore`).
+* **Endpoint API:**
+  * `GET /api/index.php` : Informasi dasar API (200 OK).
+  * `GET /api/health.php` : Cek status kesehatan server (200 OK).
+  * `GET /api/live-stream.php` : Deteksi otomatis siaran langsung pidato presiden (200 OK).
+  * `POST /api/live-stream.php` : Input catatan sentimen (201 Created, 400 Bad Request, 422 Unprocessable Content, 405 Method Not Allowed).
 
-**2. Checklist Aksesibilitas Dasar (a11y)**
-* Pendeklarasian bahasa utama dokumen: `lang="id"`.
-* Hierarki heading yang logis berurutan (H1 hingga H4 tanpa terputus).
-* Teks alternatif (`alt` attribute) pada semua elemen gambar (`<img>`).
-* Atribut `for` pada `<label>` yang terhubung tepat dengan atribut `id` pada `<input>`/`<select>`.
-* Teks tautan (link) yang deskriptif dan memiliki tujuan jelas.
+## Struktur Halaman
+* `/index.html` : Halaman utama pemantauan pidato dan data pasar.
+* `/api/` : Layanan REST API backend.
 
-## ✨ Pemenuhan Syarat Modul 9 (Back-End PHP & REST API)
-Layanan server-side backend dibangun dengan standar berikut:
-
-* **Versi PHP:** PHP 8.4 / 8.3 pada Laragon 5 dengan `declare(strict_types=1);`.
-* **Kebutuhan Composer:** Pengelolaan dependensi via `composer.json` dan `composer.lock` menggunakan pustaka `vlucas/phpdotenv`.
-* **Konfigurasi Environment:** Konfigurasi tersimpan pada `.env`, template publik pada `.env.example`, dan diamankan melalui `.gitignore`.
-* **Daftar Endpoint REST API:**
-  * `GET /api/index.php` : Informasi umum API Pidatoku (HTTP 200).
-  * `GET /api/health.php` : Pemeriksaan status kesehatan server (HTTP 200).
-  * `GET /api/live-stream.php` : Deteksi otomatis siaran langsung pidato presiden (HTTP 200).
-  * `POST /api/live-stream.php` : Input catatan sentimen pidato (HTTP 201 Created, HTTP 400 Bad Request, HTTP 422 Unprocessable Content, HTTP 405 Method Not Allowed).
-
-## 🗺️ Sitemap / Struktur Halaman
-* `/index.html` (Halaman Utama / Landing Page)
-  * `#live-monitor` : Pemantauan Siaran Langsung & Data Pasar (IHSG/Kurs).
-  * `#arsip-pidato` : Arsip Berita Pidato Historis dan Dampak Pasar.
-  * `#kontak` : Formulir Interaktif untuk Masukan Pengguna.
-* `/api/` (Layanan REST API Backend)
-
-## 🚀 Cara Menjalankan (Pengujian Localhost)
-1. Pastikan server lokal (**Laragon 5**) sudah berjalan (klik **Start All**).
-2. Tempatkan direktori `pidatoku` ini di dalam folder `C:\laragon\www\`.
+## Cara Menjalankan
+1. Jalankan Laragon 5 (klik Start All untuk menjalankan Apache dan PHP).
+2. Pastikan folder berada di `C:\laragon\www\pidatoku`.
 3. Jalankan `composer install` jika folder `vendor` belum terpasang.
-4. Salin konfigurasi dengan perintah `copy .env.example .env`.
-5. Buka browser dan akses URL: `http://localhost/pidatoku/`.
+4. Salin file setting: `copy .env.example .env`.
+5. Buka browser dan akses `http://localhost/pidatoku/`.
