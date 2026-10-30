@@ -22,53 +22,149 @@ if ($method === 'OPTIONS') {
     exit;
 }
 
-function deteksiSiaranLangsung(): array {
-    $cadanganId = 'V5dWnSPEruY';
-    $cadanganJudul = 'Pidato Presiden Prabowo Subianto: Sidang Kabinet Paripurna 2026';
-    $channelId = $_ENV['YOUTUBE_CHANNEL_ID'] ?? 'UC_m_NBgf7ieJBHzb6vvJC5A';
+const DURASI_CACHE_DETIK = 90;
+const DURASI_PIDATO_MINIMAL_DETIK = 600;
 
-    $hasil = [
+function videoCadangan(): array {
+    return [
         'is_live' => false,
-        'status_siaran' => 'REKAMAN',
-        'badge' => 'REKAMAN TERKINI',
-        'video_id' => $cadanganId,
-        'judul' => $cadanganJudul,
-        'url_video' => 'https://www.youtube-nocookie.com/embed/' . $cadanganId,
-        'topik' => 'Evaluasi Kinerja Pemerintah & Ketahanan Ekonomi Nasional',
-        'sumber' => 'Kompas TV / Sekretariat Presiden'
+        'status_siaran' => 'CADANGAN',
+        'badge' => 'REKAMAN',
+        'video_id' => 'XJceClXVssg',
+        'judul' => 'Presiden Prabowo Resmikan SMA Taruna Nusantara Kampus Cimahi, Jawa Barat, 30 Oktober 2026',
+        'url_video' => 'https://www.youtube-nocookie.com/embed/XJceClXVssg',
+        'thumbnail' => 'https://i.ytimg.com/vi/XJceClXVssg/hqdefault.jpg',
+        'tayang_pada' => '2026-10-30T14:02:00Z',
+        'sumber' => 'Sekretariat Presiden'
     ];
+}
 
-    $konteks = stream_context_create([
-        'http' => [
-            'timeout' => 3,
-            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        ]
-    ]);
+function panggilYoutube(string $sumber, array $parameter, string $apiKey): ?array {
+    $url = 'https://www.googleapis.com/youtube/v3/' . $sumber . '?' . http_build_query($parameter + ['key' => $apiKey]);
+    $konteks = stream_context_create(['http' => ['timeout' => 5, 'ignore_errors' => true]]);
 
-    $konten = @file_get_contents('https://www.youtube.com/channel/' . $channelId . '/live', false, $konteks);
+    $konten = @file_get_contents($url, false, $konteks);
+    if ($konten === false) {
+        return null;
+    }
 
-    if ($konten !== false) {
-        $sedangLive = str_contains($konten, '"isLive":true') || str_contains($konten, '"status":"LIVE"');
-        if ($sedangLive) {
-            if (preg_match('/"videoId":"([a-zA-Z0-9_-]{11})"/', $konten, $cocokVideo)) {
-                $hasil['is_live'] = true;
-                $hasil['status_siaran'] = 'LIVE';
-                $hasil['badge'] = 'SIARAN LANGSUNG';
-                $hasil['video_id'] = $cocokVideo[1];
-                $hasil['url_video'] = 'https://www.youtube-nocookie.com/embed/' . $cocokVideo[1];
-                $hasil['sumber'] = 'Sekretariat Presiden (Live Stream)';
-                $hasil['topik'] = 'Pidato Kenegaraan / Arahan Presiden Terkini';
+    $data = json_decode($konten, true);
+    return is_array($data) && isset($data['items']) ? $data : null;
+}
 
-                if (preg_match('/<title>(.*?) - YouTube<\/title>/', $konten, $cocokJudul)) {
-                    $hasil['judul'] = html_entity_decode(trim($cocokJudul[1]), ENT_QUOTES, 'UTF-8');
-                } else {
-                    $hasil['judul'] = 'Siaran Langsung Pidato Presiden Republik Indonesia';
-                }
-            }
+function durasiDetik(string $durasi): int {
+    if (!preg_match('/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/', $durasi, $cocok)) {
+        return 0;
+    }
+    return (int)($cocok[1] ?? 0) * 3600 + (int)($cocok[2] ?? 0) * 60 + (int)($cocok[3] ?? 0);
+}
+
+function judulTanpaLive(string $judul): string {
+    return preg_replace('/^LIVE:\s*/iu', '', trim($judul));
+}
+
+function judulPidatoPresiden(string $judul): bool {
+    $judulBersih = judulTanpaLive($judul);
+
+    if (preg_match('/^(keterangan pers|ketpers)\b(?!\s+presiden)/iu', $judulBersih)) {
+        return false;
+    }
+    return preg_match('/\bprabowo\b|\bpresiden (ri|republik indonesia)\b/iu', $judulBersih) === 1;
+}
+
+function bentukHasil(array $video, bool $sedangLive): array {
+    $videoId = $video['id'];
+    $thumbnail = $video['snippet']['thumbnails'] ?? [];
+
+    return [
+        'is_live' => $sedangLive,
+        'status_siaran' => $sedangLive ? 'LIVE' : 'TERBARU',
+        'badge' => $sedangLive ? 'SIARAN LANGSUNG' : 'PIDATO TERBARU',
+        'video_id' => $videoId,
+        'judul' => judulTanpaLive($video['snippet']['title']),
+        'url_video' => 'https://www.youtube-nocookie.com/embed/' . $videoId,
+        'thumbnail' => $thumbnail['maxres']['url'] ?? $thumbnail['standard']['url'] ?? $thumbnail['high']['url'] ?? '',
+        'tayang_pada' => $video['liveStreamingDetails']['actualStartTime'] ?? $video['snippet']['publishedAt'],
+        'sumber' => 'Sekretariat Presiden'
+    ];
+}
+
+function pilihVideo(array $daftarVideo): ?array {
+    usort($daftarVideo, fn(array $a, array $b): int => strcmp($b['snippet']['publishedAt'], $a['snippet']['publishedAt']));
+
+    $pidatoTerbaru = null;
+
+    foreach ($daftarVideo as $video) {
+        if (!($video['status']['embeddable'] ?? false) || !judulPidatoPresiden($video['snippet']['title'])) {
+            continue;
+        }
+
+        $statusSiaran = $video['snippet']['liveBroadcastContent'];
+        if ($statusSiaran === 'live') {
+            return bentukHasil($video, true);
+        }
+
+        if (
+            $pidatoTerbaru === null
+            && $statusSiaran === 'none'
+            && durasiDetik($video['contentDetails']['duration']) >= DURASI_PIDATO_MINIMAL_DETIK
+        ) {
+            $pidatoTerbaru = bentukHasil($video, false);
         }
     }
 
-    return $hasil;
+    return $pidatoTerbaru;
+}
+
+function ambilDariYoutube(string $channelId, string $apiKey): ?array {
+    $daftarUpload = panggilYoutube('playlistItems', [
+        'part' => 'contentDetails',
+        'playlistId' => 'UU' . substr($channelId, 2),
+        'maxResults' => 50
+    ], $apiKey);
+
+    if ($daftarUpload === null) {
+        return null;
+    }
+
+    $idVideo = array_map(fn(array $item): string => $item['contentDetails']['videoId'], $daftarUpload['items']);
+    $detailVideo = panggilYoutube('videos', [
+        'part' => 'snippet,contentDetails,liveStreamingDetails,status',
+        'id' => implode(',', $idVideo)
+    ], $apiKey);
+
+    return $detailVideo === null ? null : pilihVideo($detailVideo['items']);
+}
+
+function deteksiSiaranLangsung(): array {
+    $channelId = $_ENV['YOUTUBE_CHANNEL_ID'] ?? 'UC_m_NBgf7ieJBHzb6vvJC5A';
+    $apiKey = $_ENV['API_KEY'] ?? '';
+    $fileCache = sys_get_temp_dir() . '/pidatoku-siaran-' . $channelId . '.json';
+
+    $cache = is_file($fileCache) ? json_decode((string)file_get_contents($fileCache), true) : null;
+    $cacheValid = is_array($cache) && isset($cache['video_id']);
+
+    if ($cacheValid && time() - filemtime($fileCache) < DURASI_CACHE_DETIK) {
+        return $cache;
+    }
+
+    $hasil = $apiKey === '' ? null : ambilDariYoutube($channelId, $apiKey);
+
+    if ($hasil !== null) {
+        file_put_contents($fileCache, json_encode($hasil, JSON_UNESCAPED_UNICODE), LOCK_EX);
+        return $hasil;
+    }
+
+    if ($cacheValid) {
+        touch($fileCache);
+        return array_merge($cache, [
+            'is_live' => false,
+            'status_siaran' => 'TERBARU',
+            'badge' => 'PIDATO TERBARU'
+        ]);
+    }
+
+    return videoCadangan();
 }
 
 if ($method === 'GET') {
@@ -85,13 +181,12 @@ if ($method === 'GET') {
             'status_siaran' => $infoSiaran['status_siaran'],
             'badge' => $infoSiaran['badge'],
             'judul' => $infoSiaran['judul'],
-            'topik' => $infoSiaran['topik'],
             'pembicara' => 'Presiden Republik Indonesia (Prabowo Subianto)',
-            'lokasi' => 'Istana Negara, Jakarta',
             'sumber' => $infoSiaran['sumber'],
-            'format' => 'Video HD 1080p',
             'video_id' => $infoSiaran['video_id'],
             'url_video' => $infoSiaran['url_video'],
+            'thumbnail' => $infoSiaran['thumbnail'],
+            'tayang_pada' => $infoSiaran['tayang_pada'],
             'waktu_cek' => date('c'),
             'indikator_pasar' => [
                 'pantau_ihsg' => true,
