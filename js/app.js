@@ -3,6 +3,7 @@ import { inisialisasiFormValidasi } from './form-validasi.js';
 
 const endpointFrankfurter = 'https://api.frankfurter.dev/v2';
 const mataUangUtama = ['USD', 'EUR', 'JPY', 'GBP', 'SGD', 'AUD', 'CNY'];
+const intervalCekSiaran = 90000;
 const dataPidato = [
     { id: 1, judul: 'Pidato RUU APBN 2027', tanggal: '2026-08-16', kategori: 'Ekonomi', dampakIHSG: 0.8, statusPasar: 'Buka' },
     { id: 2, judul: 'Pidato Kenegaraan HUT RI', tanggal: '2026-08-17', kategori: 'Geopolitik', dampakIHSG: null, statusPasar: 'Libur' }
@@ -299,6 +300,15 @@ function inisialisasiPasar() {
 function inisialisasiPlayerSiaran() {
     const kontainer = document.querySelector('.stream-container');
     const tombolPlay = document.getElementById('btn-play-stream');
+    const tombolPindah = document.getElementById('btn-switch-stream');
+    const elemenSiaran = {
+        tickerBadge: document.getElementById('ticker-badge'),
+        badge: document.getElementById('stream-badge'),
+        judul: document.getElementById('stream-title'),
+        pratinjau: document.getElementById('stream-preview'),
+        sumber: document.getElementById('stream-source'),
+        tanggal: document.getElementById('stream-date')
+    };
     if (!kontainer) return;
 
     kontainer.style.cursor = 'pointer';
@@ -306,53 +316,106 @@ function inisialisasiPlayerSiaran() {
     kontainer.setAttribute('tabindex', '0');
     kontainer.setAttribute('aria-label', 'Putar siaran pidato kenegaraan');
 
+    let infoSiaran = null;
+    let videoDiputar = null;
     let sedangMemuat = false;
 
-    async function putarSiaran() {
-        if (sedangMemuat) return;
-        sedangMemuat = true;
+    function tampilkanInfoSiaran(data) {
+        const formatTanggal = new Intl.DateTimeFormat('id-ID', {
+            dateStyle: 'long',
+            timeZone: 'Asia/Jakarta'
+        });
 
-        let urlVideo = 'https://www.youtube-nocookie.com/embed/V5dWnSPEruY';
+        elemenSiaran.tickerBadge.textContent = data.badge;
+        elemenSiaran.badge.textContent = data.badge;
+        elemenSiaran.badge.classList.toggle('live', data.is_live);
+        elemenSiaran.badge.classList.toggle('realtime', !data.is_live);
+        elemenSiaran.judul.textContent = data.judul;
+        elemenSiaran.sumber.textContent = data.sumber;
+        elemenSiaran.tanggal.dateTime = data.tayang_pada;
+        elemenSiaran.tanggal.textContent = formatTanggal.format(new Date(data.tayang_pada));
 
+        if (!videoDiputar) {
+            tombolPlay.textContent = data.is_live ? 'Putar Siaran Langsung' : 'Putar Pidato Terbaru';
+            if (data.thumbnail) {
+                elemenSiaran.pratinjau.src = data.thumbnail;
+                elemenSiaran.pratinjau.alt = data.judul;
+            }
+        }
+    }
+
+    async function muatInfoSiaran() {
         try {
             const respons = await fetch('./api/live-stream.php');
-            if (respons.ok) {
-                const hasil = await respons.json();
-                if (hasil && hasil.data && hasil.data.url_video) {
-                    const pemisah = hasil.data.url_video.includes('?') ? '&' : '?';
-                    urlVideo = hasil.data.url_video + pemisah + 'autoplay=1';
-                }
-                const judul = document.querySelector('.channel-title');
-                if (judul && hasil && hasil.data && hasil.data.judul) {
-                    judul.textContent = hasil.data.judul;
-                }
-                const badge = document.querySelector('.channel-badge.live');
-                if (badge && hasil && hasil.data && hasil.data.badge) {
-                    badge.textContent = hasil.data.badge;
-                }
+            if (!respons.ok) throw new Error(`HTTP ${respons.status}`);
+
+            const hasil = await respons.json();
+            infoSiaran = hasil.data;
+
+            if (!videoDiputar) {
+                tampilkanInfoSiaran(infoSiaran);
+            } else {
+                tombolPindah.hidden = !(infoSiaran.is_live && infoSiaran.video_id !== videoDiputar);
             }
-        } catch (err) {
-            console.warn('Gagal memuat data API siaran:', err);
-        }
-
-        kontainer.innerHTML = '<iframe src="' + urlVideo + '" title="Siaran Pidato Kenegaraan" style="width: 100%; height: 100%; border: 0;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
-
-        if (tombolPlay) {
-            tombolPlay.textContent = 'Siaran Sedang Berjalan';
-            tombolPlay.disabled = true;
+        } catch (error) {
+            console.warn('Gagal memuat data API siaran:', error.message);
         }
     }
 
-    kontainer.addEventListener('click', putarSiaran, { once: true });
-    if (tombolPlay) {
-        tombolPlay.addEventListener('click', putarSiaran, { once: true });
+    function tampilkanVideo(data) {
+        const pemutar = document.createElement('iframe');
+        pemutar.src = `${data.url_video}?autoplay=1`;
+        pemutar.title = data.judul;
+        pemutar.className = 'stream-frame';
+        pemutar.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+        pemutar.allowFullscreen = true;
+
+        videoDiputar = data.video_id;
+        kontainer.replaceChildren(pemutar);
+        kontainer.style.cursor = '';
+        kontainer.removeAttribute('role');
+        kontainer.removeAttribute('tabindex');
+        kontainer.removeAttribute('aria-label');
+
+        tampilkanInfoSiaran(data);
+        tombolPlay.textContent = 'Siaran Sedang Diputar';
+        tombolPlay.disabled = true;
+        tombolPindah.hidden = true;
     }
+
+    async function putarSiaran() {
+        if (sedangMemuat || videoDiputar) return;
+        sedangMemuat = true;
+
+        if (!infoSiaran) await muatInfoSiaran();
+
+        if (infoSiaran) {
+            tampilkanVideo(infoSiaran);
+        } else {
+            tombolPlay.textContent = 'Gagal Memuat, Coba Lagi';
+        }
+
+        sedangMemuat = false;
+    }
+
+    kontainer.addEventListener('click', putarSiaran);
+    tombolPlay.addEventListener('click', putarSiaran);
+    tombolPindah.addEventListener('click', () => tampilkanVideo(infoSiaran));
     kontainer.addEventListener('keydown', (peristiwa) => {
         if (peristiwa.key === 'Enter' || peristiwa.key === ' ') {
             peristiwa.preventDefault();
             putarSiaran();
         }
-    }, { once: true });
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) muatInfoSiaran();
+    });
+    setInterval(() => {
+        if (!document.hidden) muatInfoSiaran();
+    }, intervalCekSiaran);
+
+    muatInfoSiaran();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
