@@ -5,13 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pidatoku - Pantau Pidato Presiden & Sentimen Pasar</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=3">
 </head>
 
 <body>
 
     <aside class="ticker-bar" role="status" aria-live="polite">
-        <span class="ticker-badge">SIARAN LANGSUNG</span>
+        <span class="ticker-badge" id="ticker-badge">MEMUAT</span>
         <span class="ticker-title">PUSAT DATA FINANSIAL PRESIDEN</span>
         <p class="ticker-marquee" aria-hidden="true">
             <span>Grafik IHSG harian | Kurs referensi harian | Siaran langsung dari Istana Negara</span>
@@ -40,12 +40,13 @@
             <section class="hero-grid dual-channel">
                 <article class="channel-card card">
                     <header class="channel-header">
-                        <span class="channel-badge live">LANGSUNG</span>
+                        <span class="channel-badge realtime" id="stream-badge">MEMUAT</span>
                         <span class="channel-number">SALURAN 01</span>
                     </header>
-                    <h3 class="channel-title">Siaran Pidato Kenegaraan Istana Negara</h3>
+                    <h3 class="channel-title" id="stream-title">Memuat pidato terbaru...</h3>
                     <figure class="stream-container" id="stream-container">
-                        <img src="assets/live-placeholder.jpg" alt="Siaran langsung pidato kenegaraan dari Istana Negara" class="stream-preview">
+                        <img src="assets/live-placeholder.jpg" alt="Siaran pidato Presiden Republik Indonesia"
+                            class="stream-preview" id="stream-preview">
                         <span class="stream-overlay" aria-hidden="true">
                             <svg class="play-icon" viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
                                 <polygon points="5,3 19,12 5,21"></polygon>
@@ -53,10 +54,13 @@
                         </span>
                     </figure>
                     <footer class="channel-meta">
-                        <span class="meta-item"><strong>Sumber:</strong> TVRI / Sekretariat Kabinet</span>
-                        <span class="meta-item"><strong>Format:</strong> Video HD 1080p</span>
+                        <span class="meta-item"><strong>Sumber:</strong> <span id="stream-source">Sekretariat
+                                Presiden</span></span>
+                        <span class="meta-item"><strong>Tayang:</strong> <time id="stream-date">-</time></span>
                     </footer>
-                    <button type="button" class="btn btn-primary" id="btn-play-stream">Putar Siaran Langsung</button>
+                    <button type="button" class="btn btn-primary" id="btn-play-stream">Putar Pidato Terbaru</button>
+                    <button type="button" class="btn btn-switch" id="btn-switch-stream" hidden>Pindah ke Siaran
+                        Langsung</button>
                 </article>
 
                 <article class="channel-card card">
@@ -80,7 +84,8 @@
                                     <div class="tradingview-widget-container__widget"></div>
                                 </div>
                             </figure>
-                            <p class="market-source">Sumber: TradingView. Data IHSG tersedia pada interval harian, mingguan, dan bulanan.</p>
+                            <p class="market-source">Sumber: TradingView. Data IHSG tersedia pada interval harian,
+                                mingguan, dan bulanan.</p>
                         </section>
 
                         <section class="market-card card currency-card" aria-labelledby="currency-title">
@@ -90,16 +95,23 @@
                                     <h4 id="currency-title">Nilai Rupiah</h4>
                                 </hgroup>
                                 <section class="currency-picker">
-                                    <button class="currency-picker-button" id="currency-picker-button" type="button" aria-label="Cari mata uang" aria-expanded="false" aria-controls="currency-picker-menu">
+                                    <button class="currency-picker-button" id="currency-picker-button" type="button"
+                                        aria-label="Cari mata uang" aria-expanded="false"
+                                        aria-controls="currency-picker-menu">
                                         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-                                            <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor" stroke-width="1.8"></circle>
-                                            <path d="m16 16 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                                            <circle cx="10.8" cy="10.8" r="6.8" fill="none" stroke="currentColor"
+                                                stroke-width="1.8"></circle>
+                                            <path d="m16 16 4.2 4.2" fill="none" stroke="currentColor"
+                                                stroke-width="1.8" stroke-linecap="round"></path>
                                         </svg>
                                     </button>
                                     <menu class="currency-picker-menu" id="currency-picker-menu" hidden>
-                                        <label class="sr-only" for="currency-search">Cari kode atau nama mata uang</label>
-                                        <input type="search" id="currency-search" placeholder="Cari mata uang..." autocomplete="off" aria-controls="currency-options">
-                                        <ul class="currency-options" id="currency-options" role="listbox" aria-label="Mata uang tersedia"></ul>
+                                        <label class="sr-only" for="currency-search">Cari kode atau nama mata
+                                            uang</label>
+                                        <input type="search" id="currency-search" placeholder="Cari mata uang..."
+                                            autocomplete="off" aria-controls="currency-options">
+                                        <ul class="currency-options" id="currency-options" role="listbox"
+                                            aria-label="Mata uang tersedia"></ul>
                                     </menu>
                                 </section>
                             </header>
@@ -107,7 +119,8 @@
                                 <span class="stat-val" id="fx-rate-value">Memuat kurs...</span>
                                 <span class="stat-change" id="fx-pair-label">1 USD = ... IDR</span>
                             </p>
-                            <p class="market-label" id="fx-rate-meta" role="status" aria-live="polite">Mengambil kurs referensi harian...</p>
+                            <p class="market-label" id="fx-rate-meta" role="status" aria-live="polite">Mengambil kurs
+                                referensi harian...</p>
                             <button type="button" class="btn btn-retry" id="fx-retry-button" hidden>Coba Lagi</button>
                         </section>
                     </section>
@@ -120,14 +133,16 @@
 
             <section class="cards-grid">
                 <article class="card">
-                    <img src="assets/thumbnail-pidato1.jpg" alt="Presiden membacakan nota keuangan di gedung DPR" class="speech-thumbnail">
+                    <img src="assets/thumbnail-pidato1.jpg" alt="Presiden membacakan nota keuangan di gedung DPR"
+                        class="speech-thumbnail">
                     <section class="speech-content">
                         <header class="speech-meta">
                             <span class="speech-badge">APBN 2027</span>
                             <time class="speech-date" datetime="2026-08-16">16 Agustus 2026</time>
                         </header>
                         <h3>Pidato RUU APBN 2027</h3>
-                        <p class="speech-desc">Fokus anggaran belanja pemerintah diarahkan ke sektor kedaulatan digital, hilirisasi industri, dan ketahanan energi.</p>
+                        <p class="speech-desc">Fokus anggaran belanja pemerintah diarahkan ke sektor kedaulatan digital,
+                            hilirisasi industri, dan ketahanan energi.</p>
                         <footer class="speech-impact">
                             <span class="impact-item">
                                 <span class="impact-label">IHSG</span>
@@ -142,14 +157,16 @@
                 </article>
 
                 <article class="card">
-                    <img src="assets/thumbnail-pidato2.jpg" alt="Presiden memberikan amanat pada upacara kemerdekaan" class="speech-thumbnail">
+                    <img src="assets/thumbnail-pidato2.jpg" alt="Presiden memberikan amanat pada upacara kemerdekaan"
+                        class="speech-thumbnail">
                     <section class="speech-content">
                         <header class="speech-meta">
                             <span class="speech-badge">HUT RI</span>
                             <time class="speech-date" datetime="2026-08-17">17 Agustus 2026</time>
                         </header>
                         <h3>Pidato Kenegaraan HUT RI</h3>
-                        <p class="speech-desc">Penekanan arah geopolitik nasional, perlindungan rantai pasok ekonomi mikro, dan stabilitas cadangan devisa.</p>
+                        <p class="speech-desc">Penekanan arah geopolitik nasional, perlindungan rantai pasok ekonomi
+                            mikro, dan stabilitas cadangan devisa.</p>
                         <footer class="speech-impact">
                             <span class="impact-item">
                                 <span class="impact-label">IHSG</span>
@@ -167,7 +184,8 @@
 
         <section id="kontak" aria-labelledby="kontak-title">
             <h2 id="kontak-title" class="section-title">Formulir Masukan & Permintaan Fitur</h2>
-            <p class="section-desc">Beri tahu kami data finansial atau analitik apa lagi yang ingin Anda lihat terintegrasi di platform ini.</p>
+            <p class="section-desc">Beri tahu kami data finansial atau analitik apa lagi yang ingin Anda lihat
+                terintegrasi di platform ini.</p>
 
             <aside id="ringkasan-error" class="error-summary" role="alert" aria-live="polite" hidden>
                 <p class="error-summary-title">Terdapat kesalahan pada isian berikut:</p>
@@ -177,13 +195,15 @@
             <form id="form-masukan" action="proses-masukan.php" method="POST" class="card contact-form" novalidate>
                 <p class="form-group">
                     <label for="nama_lengkap">Nama Lengkap</label>
-                    <input type="text" id="nama_lengkap" name="nama_lengkap" required autocomplete="name" aria-describedby="error-nama_lengkap">
+                    <input type="text" id="nama_lengkap" name="nama_lengkap" required autocomplete="name"
+                        aria-describedby="error-nama_lengkap">
                     <span id="error-nama_lengkap" class="field-error" aria-live="polite"></span>
                 </p>
 
                 <p class="form-group">
                     <label for="email_pengguna">Alamat Email</label>
-                    <input type="email" id="email_pengguna" name="email_pengguna" required autocomplete="email" aria-describedby="error-email_pengguna">
+                    <input type="email" id="email_pengguna" name="email_pengguna" required autocomplete="email"
+                        aria-describedby="error-email_pengguna">
                     <span id="error-email_pengguna" class="field-error" aria-live="polite"></span>
                 </p>
 
@@ -200,7 +220,8 @@
 
                 <p class="form-group">
                     <label for="detail_pesan">Detail Pesan</label>
-                    <textarea id="detail_pesan" name="detail_pesan" rows="4" required aria-describedby="error-detail_pesan"></textarea>
+                    <textarea id="detail_pesan" name="detail_pesan" rows="4" required
+                        aria-describedby="error-detail_pesan"></textarea>
                     <span id="error-detail_pesan" class="field-error" aria-live="polite"></span>
                 </p>
 
@@ -218,14 +239,13 @@
             <p>&copy; 2026 Pidatoku. Mata Kuliah Pemrograman Web.</p>
             <ul class="footer-links">
                 <li><a href="#live-monitor">Kembali ke Atas</a></li>
-                <li><a href="https://github.com/Blanchette756/PIDATOKU" target="_blank" rel="noopener noreferrer">Repositori GitHub</a></li>
+                <li><a href="https://github.com/Blanchette756/PIDATOKU" target="_blank"
+                        rel="noopener noreferrer">Repositori GitHub</a></li>
             </ul>
         </section>
     </footer>
 
-    <script type="module" src="js/app.js?v=2"></script>
+    <script type="module" src="js/app.js?v=3"></script>
 </body>
-
-</html>
 
 </html>
