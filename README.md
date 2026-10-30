@@ -22,7 +22,7 @@ Layanan backend dibangun menggunakan PHP di Laragon 5:
 * **Endpoint API:**
   * `GET /api/index.php` : Informasi dasar API (200 OK).
   * `GET /api/health.php` : Cek status kesehatan server (200 OK).
-  * `GET /api/live-stream.php` : Deteksi otomatis siaran langsung pidato presiden (200 OK).
+  * `GET /api/live-stream.php` : Siaran langsung atau pidato terbaru presiden dari channel Sekretariat Presiden lewat YouTube Data API v3 (200 OK).
   * `POST /api/live-stream.php` : Input catatan sentimen (201 Created, 400 Bad Request, 422 Unprocessable Content, 405 Method Not Allowed).
 
 ## Struktur Halaman
@@ -34,4 +34,5 @@ Layanan backend dibangun menggunakan PHP di Laragon 5:
 2. Pastikan folder berada di `C:\laragon\www\pidatoku`.
 3. Jalankan `composer install` jika folder `vendor` belum terpasang.
 4. Salin file setting: `copy .env.example .env`.
-5. Buka browser dan akses `http://localhost/pidatoku/`.
+5. Isi `API_KEY` di `.env` dengan API key YouTube Data API v3.
+6. Buka browser dan akses `http://localhost/pidatoku/`.
