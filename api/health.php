@@ -25,14 +25,35 @@ if ($method !== 'GET') {
     exit;
 }
 
-http_response_code(200);
+$database = ['terhubung' => false];
+
+try {
+    require_once __DIR__ . '/../config/database.php';
+
+    $info = db()->query('SELECT DATABASE() AS nama_db, VERSION() AS versi')->fetch();
+    $database = [
+        'terhubung' => true,
+        'driver' => db()->getAttribute(PDO::ATTR_DRIVER_NAME),
+        'nama_db' => $info['nama_db'],
+        'versi_mysql' => $info['versi']
+    ];
+} catch (Throwable $e) {
+    $database['pesan'] = ($_ENV['APP_DEBUG'] ?? 'false') === 'true'
+        ? $e->getMessage()
+        : 'Koneksi basis data gagal';
+}
+
+$sehat = $database['terhubung'];
+
+http_response_code($sehat ? 200 : 503);
 echo json_encode([
-    'status' => 'ok',
-    'code' => 200,
+    'status' => $sehat ? 'ok' : 'error',
+    'code' => $sehat ? 200 : 503,
     'aplikasi' => 'Pidatoku',
     'layanan' => 'Pusat Pemantau Pidato Kenegaraan & Sentimen Finansial',
-    'kondisi' => 'Server beroperasi normal',
+    'kondisi' => $sehat ? 'Server dan basis data beroperasi normal' : 'Basis data tidak dapat dihubungi',
     'php' => PHP_VERSION,
+    'database' => $database,
     'waktu' => date('c')
 ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 exit;
