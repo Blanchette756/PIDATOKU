@@ -5,6 +5,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../data/DataMasukan.php';
 
 function kirimJson(int $kode, array $isi): never
 {
@@ -77,17 +78,8 @@ if ($errors !== []) {
 }
 
 try {
-    $stmt = db()->prepare(
-        'INSERT INTO masukan (nama_lengkap, email, kategori, detail_pesan)
-         VALUES (:nama_lengkap, :email, :kategori, :detail_pesan)'
-    );
-    $stmt->execute([
-        'nama_lengkap' => $namaLengkap,
-        'email' => $email,
-        'kategori' => $kategori,
-        'detail_pesan' => $detailPesan
-    ]);
-    $idBaru = (int) db()->lastInsertId();
+    $dataMasukan = new DataMasukan(db());
+    $idBaru = $dataMasukan->simpan($namaLengkap, $email, $kategori, $detailPesan);
 } catch (Throwable $e) {
     kirimJson(500, [
         'status' => 'error',
