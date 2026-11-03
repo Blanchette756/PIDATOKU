@@ -38,7 +38,9 @@ echo json_encode([
     'endpoint' => [
         'root' => '/api/index.php',
         'health' => '/api/health.php',
-        'siaran_langsung' => '/api/live-stream.php'
+        'siaran_langsung' => '/api/live-stream.php',
+        'arsip_pidato' => '/api/pidato.php',
+        'masukan' => '/api/masukan.php'
     ],
     'waktu' => date('c')
 ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
