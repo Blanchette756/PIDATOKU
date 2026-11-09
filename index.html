@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pidatoku - Pantau Pidato Presiden & Sentimen Pasar</title>
-    <link rel="stylesheet" href="css/styles.css?v=3">
+    <link rel="stylesheet" href="css/styles.css?v=4">
 </head>
 
 <body>
@@ -79,13 +79,17 @@
                                 </hgroup>
                                 <span class="market-session">Harian</span>
                             </header>
-                            <figure class="ihsg-chart-frame">
-                                <div class="tradingview-widget-container" id="ihsg-chart">
-                                    <div class="tradingview-widget-container__widget"></div>
-                                </div>
+                            <p class="market-value">
+                                <span class="stat-val" id="ihsg-value">Memuat IHSG...</span>
+                                <span class="stat-change" id="ihsg-change">Perubahan harian: -</span>
+                            </p>
+                            <figure class="ihsg-chart-frame" id="ihsg-chart" role="img"
+                                aria-label="Grafik harga penutupan IHSG harian">
+                                <p class="chart-status" id="ihsg-status">Memuat grafik IHSG...</p>
                             </figure>
-                            <p class="market-source">Sumber: TradingView. Data IHSG tersedia pada interval harian,
-                                mingguan, dan bulanan.</p>
+                            <p class="market-source" id="ihsg-source" role="status" aria-live="polite">Sumber: Google
+                                Finance melalui Google Sheets. Data dapat tertunda hingga 20 menit.</p>
+                            <button type="button" class="btn btn-retry" id="ihsg-retry-button" hidden>Coba Lagi</button>
                         </section>
 
                         <section class="market-card card currency-card" aria-labelledby="currency-title">
@@ -245,7 +249,7 @@
         </section>
     </footer>
 
-    <script type="module" src="js/app.js?v=3"></script>
+    <script type="module" src="js/app.js?v=4"></script>
 </body>
 
 </html>

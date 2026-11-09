@@ -39,6 +39,7 @@ echo json_encode([
         'root' => '/api/index.php',
         'health' => '/api/health.php',
         'siaran_langsung' => '/api/live-stream.php',
+        'ihsg' => '/api/ihsg.php',
         'arsip_pidato' => '/api/pidato.php',
         'masukan' => '/api/masukan.php'
     ],
