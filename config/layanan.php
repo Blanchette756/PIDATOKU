@@ -1,6 +1,35 @@
 <?php
 declare(strict_types=1);
 
+ini_set('display_errors', '0');
+ini_set('log_errors', '1');
+
+function kirimErrorServer(): void
+{
+    if (!headers_sent()) {
+        http_response_code(500);
+        header('Content-Type: application/json; charset=utf-8');
+    }
+    echo json_encode([
+        'code' => 500,
+        'status' => 'error',
+        'pesan' => 'Terjadi kesalahan pada server'
+    ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+}
+
+set_exception_handler(function (Throwable $e): void {
+    catatError($e, 'error tidak tertangani');
+    kirimErrorServer();
+});
+
+register_shutdown_function(function (): void {
+    $galat = error_get_last();
+    if ($galat !== null && in_array($galat['type'], [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR], true)) {
+        error_log(sprintf('[pidatoku] error fatal: %s di %s:%d', $galat['message'], $galat['file'], $galat['line']));
+        kirimErrorServer();
+    }
+});
+
 require_once __DIR__ . '/database.php';
 require_once dirname(__DIR__) . '/data/DataPidato.php';
 require_once dirname(__DIR__) . '/data/DataPasar.php';
