@@ -12,6 +12,8 @@ if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
     }
 }
 
+require_once __DIR__ . '/../data/SumberIhsg.php';
+
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 if ($method === 'OPTIONS') {
@@ -33,7 +35,7 @@ if ($method !== 'GET') {
     exit;
 }
 
-const DURASI_CACHE_IHSG_DETIK = 300;
+const JUMLAH_HARI_GRAFIK = 120;
 
 function kirimJson(int $kode, array $isi): never {
     http_response_code($kode);
@@ -41,91 +43,21 @@ function kirimJson(int $kode, array $isi): never {
     exit;
 }
 
-function ubahAngka(string $nilai): ?float {
-    $bersih = str_replace([' ', '%', ','], '', trim($nilai));
-    return is_numeric($bersih) ? (float)$bersih : null;
+function potongRiwayatGrafik(array $data): array {
+    $batas = (new DateTimeImmutable('today', new DateTimeZone('Asia/Jakarta')))
+        ->modify('-' . JUMLAH_HARI_GRAFIK . ' days')
+        ->format('Y-m-d');
+
+    $data['riwayat'] = array_values(array_filter(
+        $data['riwayat'],
+        fn(array $titik): bool => $titik['tanggal'] >= $batas
+    ));
+    return $data;
 }
 
-function ubahTanggal(string $nilai, string $format): ?string {
-    foreach (['!n/j/Y H:i:s', '!n/j/Y'] as $pola) {
-        $tanggal = DateTimeImmutable::createFromFormat($pola, trim($nilai), new DateTimeZone('Asia/Jakarta'));
-        if ($tanggal !== false) {
-            return $tanggal->format($format);
-        }
-    }
-    return null;
-}
+$sumberIhsg = new SumberIhsg(trim((string)($_ENV['GOOGLE_SHEET_IHSG_CSV'] ?? '')));
 
-function ambilCsvGoogleSheet(string $url): ?string {
-    $konteks = stream_context_create(['http' => ['timeout' => 8, 'ignore_errors' => true]]);
-    $konten = @file_get_contents($url, false, $konteks);
-
-    $daftarHeader = function_exists('http_get_last_response_headers')
-        ? (http_get_last_response_headers() ?? [])
-        : ($http_response_header ?? []);
-    $daftarStatus = array_values(array_filter($daftarHeader, fn(string $baris): bool => str_starts_with($baris, 'HTTP/')));
-    $statusTerakhir = end($daftarStatus) ?: '';
-
-    if ($konten === false || !preg_match('/\s200\b/', $statusTerakhir)) {
-        return null;
-    }
-    return $konten;
-}
-
-function bacaDataIhsg(string $csv): ?array {
-    $aliran = fopen('php://memory', 'r+');
-    fwrite($aliran, $csv);
-    rewind($aliran);
-
-    $ringkasan = [];
-    $riwayat = [];
-    $bagianRiwayat = false;
-
-    while (($baris = fgetcsv($aliran, 0, ',', '"', '')) !== false) {
-        $kolomA = strtolower(trim((string)($baris[0] ?? '')));
-        $kolomB = trim((string)($baris[1] ?? ''));
-
-        if ($kolomA === 'date') {
-            $bagianRiwayat = true;
-            continue;
-        }
-
-        if ($bagianRiwayat) {
-            $tanggal = ubahTanggal((string)($baris[0] ?? ''), 'Y-m-d');
-            $tutup = ubahAngka($kolomB);
-            if ($tanggal !== null && $tutup !== null) {
-                $riwayat[] = ['tanggal' => $tanggal, 'tutup' => $tutup];
-            }
-            continue;
-        }
-
-        if ($kolomA !== '') {
-            $ringkasan[$kolomA] = $kolomB;
-        }
-    }
-    fclose($aliran);
-
-    $harga = ubahAngka($ringkasan['harga'] ?? '');
-    if ($harga === null) {
-        return null;
-    }
-
-    return [
-        'indeks' => 'IHSG',
-        'simbol' => $ringkasan['ticker'] ?? 'IDX:COMPOSITE',
-        'harga' => $harga,
-        'perubahan' => ubahAngka($ringkasan['perubahan'] ?? ''),
-        'persen' => ubahAngka($ringkasan['persen'] ?? ''),
-        'waktu_transaksi' => ubahTanggal($ringkasan['waktu'] ?? '', DATE_ATOM),
-        'riwayat' => $riwayat,
-        'sumber' => 'Google Finance',
-        'tertunda_menit' => 20
-    ];
-}
-
-$urlSheet = trim((string)($_ENV['GOOGLE_SHEET_IHSG_CSV'] ?? ''));
-
-if (!str_starts_with($urlSheet, 'https://docs.google.com/spreadsheets/')) {
+if (!$sumberIhsg->urlValid()) {
     kirimJson(503, [
         'status' => 'error',
         'code' => 503,
@@ -133,45 +65,25 @@ if (!str_starts_with($urlSheet, 'https://docs.google.com/spreadsheets/')) {
     ]);
 }
 
-$fileCache = sys_get_temp_dir() . '/pidatoku-ihsg-' . md5($urlSheet) . '.json';
-$cache = is_file($fileCache) ? json_decode((string)file_get_contents($fileCache), true) : null;
-$cacheValid = is_array($cache) && isset($cache['harga']);
+$hasil = $sumberIhsg->ambil();
 
-if ($cacheValid && time() - filemtime($fileCache) < DURASI_CACHE_IHSG_DETIK) {
-    kirimJson(200, [
-        'status' => 'success',
-        'code' => 200,
-        'pesan' => 'Data IHSG diambil dari cache',
-        'data' => $cache
+if ($hasil === null) {
+    kirimJson(502, [
+        'status' => 'error',
+        'code' => 502,
+        'pesan' => 'Data IHSG dari Google Sheet gagal dibaca. Periksa link CSV dan isi sheet.'
     ]);
 }
 
-$csv = ambilCsvGoogleSheet($urlSheet);
-$data = $csv === null ? null : bacaDataIhsg($csv);
+$daftarPesan = [
+    'cache' => 'Data IHSG diambil dari cache',
+    'baru' => 'Data IHSG berhasil diperbarui dari Google Finance',
+    'cadangan' => 'Google Sheet tidak dapat dihubungi, menampilkan data IHSG terakhir yang tersimpan'
+];
 
-if ($data !== null) {
-    $data['diperbarui_pada'] = date(DATE_ATOM);
-    file_put_contents($fileCache, json_encode($data, JSON_UNESCAPED_UNICODE), LOCK_EX);
-
-    kirimJson(200, [
-        'status' => 'success',
-        'code' => 200,
-        'pesan' => 'Data IHSG berhasil diperbarui dari Google Finance',
-        'data' => $data
-    ]);
-}
-
-if ($cacheValid) {
-    kirimJson(200, [
-        'status' => 'success',
-        'code' => 200,
-        'pesan' => 'Google Sheet tidak dapat dihubungi, menampilkan data IHSG terakhir yang tersimpan',
-        'data' => $cache
-    ]);
-}
-
-kirimJson(502, [
-    'status' => 'error',
-    'code' => 502,
-    'pesan' => 'Data IHSG dari Google Sheet gagal dibaca. Periksa link CSV dan isi sheet.'
+kirimJson(200, [
+    'status' => 'success',
+    'code' => 200,
+    'pesan' => $daftarPesan[$hasil['asal']],
+    'data' => potongRiwayatGrafik($hasil['data'])
 ]);

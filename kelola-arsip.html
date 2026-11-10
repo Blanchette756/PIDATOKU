@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Kelola Arsip - Pidatoku</title>
+    <link rel="stylesheet" href="css/styles.css?v=6">
+</head>
+
+<body>
+
+    <aside class="ticker-bar" role="status">
+        <span class="ticker-badge">KELOLA ARSIP</span>
+        <span class="ticker-title">PUSAT DATA FINANSIAL PRESIDEN</span>
+        <p class="ticker-marquee" aria-hidden="true">
+            <span>Arsip pidato tersinkron otomatis dari YouTube Sekretariat Presiden | Dampak IHSG dan kurs dihitung otomatis</span>
+        </p>
+    </aside>
+
+    <header>
+        <nav class="container nav-wrapper" aria-label="Navigasi Utama">
+            <hgroup class="brand">
+                <h1>Pidatoku</h1>
+                <p class="tagline">Platform Pantau Pidato & Sentimen Finansial</p>
+            </hgroup>
+            <ul>
+                <li><a href="index.html#live-monitor">Monitor Langsung</a></li>
+                <li><a href="index.html#arsip-pidato">Arsip Data</a></li>
+                <li><a href="index.html#kontak">Beri Masukan</a></li>
+                <li><a href="kelola-arsip.html" aria-current="page">Kelola Arsip</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main" class="container">
+
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="index.html">Beranda</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Kelola Arsip</span>
+        </nav>
+
+        <h2 class="page-title">Kelola Arsip Pidato</h2>
+        <p class="section-desc">Tambah, ubah, dan hapus pidato di arsip. Judul, tanggal, durasi, thumbnail, serta
+            dampak IHSG dan kurs rupiah terisi otomatis dari YouTube dan data pasar.</p>
+
+        <p class="sync-status" id="status-sinkron" role="status" aria-live="polite">Memeriksa pidato baru dari
+            YouTube...</p>
+
+        <aside class="notice" id="notifikasi" role="alert" aria-live="assertive" hidden></aside>
+
+        <section class="kelola-grid">
+
+            <section class="card kelola-form-card" aria-labelledby="judul-form">
+                <h3 id="judul-form" class="kelola-card-title">Tambah Pidato</h3>
+
+                <form id="form-pidato" novalidate>
+                    <p class="form-group" id="grup-tautan">
+                        <label for="tautan_video">Link Video YouTube</label>
+                        <input type="url" id="tautan_video" name="tautan_video" inputmode="url"
+                            placeholder="https://www.youtube.com/watch?v=..." aria-describedby="error-tautan_video">
+                        <span id="error-tautan_video" class="field-error" aria-live="polite"></span>
+                    </p>
+
+                    <p class="form-group" id="grup-judul" hidden>
+                        <label for="judul">Judul Pidato</label>
+                        <input type="text" id="judul" name="judul" maxlength="255" aria-describedby="error-judul">
+                        <span id="error-judul" class="field-error" aria-live="polite"></span>
+                    </p>
+
+                    <p class="form-group">
+                        <label for="kategori">Kategori <span class="label-hint">(opsional)</span></label>
+                        <select id="kategori" name="kategori" aria-describedby="error-kategori">
+                            <option value="">Belum dikategorikan</option>
+                            <option value="Ekonomi">Ekonomi</option>
+                            <option value="Geopolitik">Geopolitik</option>
+                            <option value="Kenegaraan">Kenegaraan</option>
+                            <option value="Pendidikan">Pendidikan</option>
+                        </select>
+                        <span id="error-kategori" class="field-error" aria-live="polite"></span>
+                    </p>
+
+                    <p class="form-group" id="grup-tayang" hidden>
+                        <label for="tayang_pada">Tanggal & Jam Tayang (WIB)</label>
+                        <input type="datetime-local" id="tayang_pada" name="tayang_pada" min="2024-10-01T00:00"
+                            aria-describedby="error-tayang_pada">
+                        <span id="error-tayang_pada" class="field-error" aria-live="polite"></span>
+                    </p>
+
+                    <p class="form-group" id="grup-deskripsi" hidden>
+                        <label for="deskripsi">Deskripsi <span class="label-hint">(opsional)</span></label>
+                        <textarea id="deskripsi" name="deskripsi" rows="4" maxlength="2000"
+                            aria-describedby="error-deskripsi"></textarea>
+                        <span id="error-deskripsi" class="field-error" aria-live="polite"></span>
+                    </p>
+
+                    <footer class="form-actions">
+                        <button type="submit" class="btn btn-primary" id="tombol-simpan">Tambah ke Arsip</button>
+                        <button type="button" class="btn btn-ghost" id="tombol-batal" hidden>Batal</button>
+                    </footer>
+                </form>
+            </section>
+
+            <section class="card kelola-tabel-card" aria-labelledby="judul-tabel">
+                <header class="kelola-tabel-header">
+                    <h3 id="judul-tabel" class="kelola-card-title">Daftar Pidato</h3>
+                    <p class="kelola-jumlah" id="info-jumlah" aria-live="polite">Memuat...</p>
+                </header>
+
+                <form class="kelola-toolbar" id="form-filter" role="search">
+                    <label class="visually-hidden" for="cari">Cari judul pidato</label>
+                    <input type="search" id="cari" name="q" placeholder="Cari judul pidato..." maxlength="100">
+                    <label class="visually-hidden" for="filter-tahun">Tahun</label>
+                    <select id="filter-tahun" name="tahun">
+                        <option value="">Semua tahun</option>
+                    </select>
+                </form>
+
+                <section class="tabel-wrapper">
+                    <table class="tabel-pidato">
+                        <thead>
+                            <tr>
+                                <th scope="col">Tanggal</th>
+                                <th scope="col">Judul</th>
+                                <th scope="col">Kategori</th>
+                                <th scope="col">IHSG</th>
+                                <th scope="col">Kurs IDR</th>
+                                <th scope="col"><span class="visually-hidden">Aksi</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="isi-tabel">
+                            <tr>
+                                <td colspan="6" class="tabel-kosong">Memuat data pidato...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <nav class="pagination" id="pagination" aria-label="Halaman daftar pidato"></nav>
+            </section>
+
+        </section>
+
+        <dialog class="dialog-konfirmasi" id="dialog-hapus" aria-labelledby="judul-dialog-hapus">
+            <form method="dialog">
+                <h3 id="judul-dialog-hapus">Hapus pidato ini?</h3>
+                <p id="teks-dialog-hapus" class="dialog-teks"></p>
+                <p class="dialog-catatan">Pidato yang dihapus tidak akan dimasukkan lagi oleh sinkron otomatis. Anda
+                    tetap bisa menambahkannya kembali lewat form.</p>
+                <footer class="form-actions">
+                    <button type="submit" value="batal" class="btn btn-ghost">Batal</button>
+                    <button type="submit" value="hapus" class="btn btn-primary">Ya, Hapus</button>
+                </footer>
+            </form>
+        </dialog>
+
+    </main>
+
+    <footer>
+        <section class="container footer-content">
+            <p>&copy; 2026 Pidatoku. Mata Kuliah Pemrograman Web.</p>
+            <ul class="footer-links">
+                <li><a href="#main">Kembali ke Atas</a></li>
+                <li><a href="https://github.com/Blanchette756/PIDATOKU" target="_blank"
+                        rel="noopener noreferrer">Repositori GitHub</a></li>
+            </ul>
+        </section>
+    </footer>
+
+    <script type="module" src="js/kelola-arsip.js?v=2"></script>
+</body>
+
+</html>

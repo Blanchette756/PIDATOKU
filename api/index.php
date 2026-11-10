@@ -41,6 +41,7 @@ echo json_encode([
         'siaran_langsung' => '/api/live-stream.php',
         'ihsg' => '/api/ihsg.php',
         'arsip_pidato' => '/api/pidato.php',
+        'sinkron_arsip' => '/api/sinkron.php',
         'masukan' => '/api/masukan.php'
     ],
     'waktu' => date('c')
