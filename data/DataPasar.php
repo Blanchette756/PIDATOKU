@@ -52,6 +52,55 @@ final class DataPasar
         ];
     }
 
+    public function sekitarTanggal(string $tanggal, int $hariSebelum, int $hariSesudah): array
+    {
+        $ihsg = $this->riwayatIhsg();
+        $daftarTanggal = array_keys($ihsg);
+        $dampak = $this->hitung($tanggal);
+
+        $posisiAcuan = 0;
+        foreach ($daftarTanggal as $posisi => $tanggalBursa) {
+            if ($tanggalBursa > $tanggal) {
+                break;
+            }
+            $posisiAcuan = $posisi;
+        }
+
+        $riwayat = [];
+        $awal = max(0, $posisiAcuan - $hariSebelum);
+        $akhir = min(count($daftarTanggal) - 1, $posisiAcuan + $hariSesudah);
+        for ($i = $awal; $i <= $akhir && $daftarTanggal !== []; $i++) {
+            $riwayat[] = ['tanggal' => $daftarTanggal[$i], 'tutup' => $ihsg[$daftarTanggal[$i]]];
+        }
+
+        $tutupHariItu = $ihsg[$tanggal] ?? null;
+        $kursHariItu = $this->kursPada($tanggal);
+        $tanggalKurs = null;
+        foreach ($this->riwayatKurs() as $tanggalAcuan => $nilai) {
+            if ($tanggalAcuan > $tanggal) {
+                break;
+            }
+            $tanggalKurs = $tanggalAcuan;
+        }
+
+        return [
+            'tanggal' => $tanggal,
+            'ihsg' => [
+                'status_pasar' => $dampak['IHSG']['status_pasar'],
+                'tutup' => $tutupHariItu,
+                'perubahan_persen' => $dampak['IHSG']['perubahan'],
+                'riwayat' => $riwayat
+            ],
+            'kurs' => [
+                'pasangan' => 'USD/IDR',
+                'status_pasar' => $dampak['KURS']['status_pasar'],
+                'nilai' => $kursHariItu,
+                'tanggal_acuan' => $tanggalKurs,
+                'perubahan_poin' => $dampak['KURS']['perubahan']
+            ]
+        ];
+    }
+
     private function hasilTanpaAngka(string $status, string $dicatatPada): array
     {
         $baris = ['perubahan' => null, 'status_pasar' => $status, 'dicatat_pada' => $dicatatPada];

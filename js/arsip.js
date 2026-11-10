@@ -29,10 +29,15 @@ export function teksDampakIhsg(dampak) {
     if (dampak.status_pasar === 'Libur') return { teks: 'Pasar Libur', kelas: 'netral' };
 
     const nilai = Number(dampak.perubahan);
-    return {
-        teks: `${formatPersen.format(nilai)}%`,
-        kelas: nilai > 0 ? 'naik' : nilai < 0 ? 'turun' : 'netral'
-    };
+    return { teks: teksPersen(nilai), kelas: kelasArah(nilai) };
+}
+
+export function teksPersen(nilai) {
+    return `${formatPersen.format(nilai).replace('-', '−')}%`;
+}
+
+export function kelasArah(nilai) {
+    return nilai > 0 ? 'naik' : nilai < 0 ? 'turun' : 'netral';
 }
 
 export function teksDampakKurs(dampak) {
@@ -57,6 +62,92 @@ export function buatElemen(nama, atribut = {}, isi = []) {
     }
     elemen.append(...[].concat(isi).filter(Boolean));
     return elemen;
+}
+
+function ikonGambar() {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.classList.add('thumb-ikon');
+    svg.innerHTML = '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>';
+    return svg;
+}
+
+export function buatThumbnail(pidato, { besar = false } = {}) {
+    const durasi = formatDurasi(pidato.durasi_detik);
+    const wadah = buatElemen('figure', { kelas: `thumb${besar ? ' thumb-besar' : ''}` }, [
+        buatElemen('span', { kelas: 'thumb-placeholder' }, [
+            ikonGambar(),
+            buatElemen('span', { kelas: 'thumb-label', teks: 'Thumbnail Pidato · 16:9' })
+        ]),
+        durasi ? buatElemen('span', { kelas: 'thumb-durasi', teks: durasi, 'aria-label': `Durasi ${durasi}` }) : null
+    ]);
+
+    if (pidato.thumbnail) {
+        const gambar = buatElemen('img', {
+            src: pidato.thumbnail,
+            alt: `Cuplikan video: ${pidato.judul}`,
+            loading: besar ? 'eager' : 'lazy',
+            decoding: 'async'
+        });
+        gambar.addEventListener('error', () => gambar.remove(), { once: true });
+        wadah.prepend(gambar);
+    }
+
+    return wadah;
+}
+
+export function buatMetaPidato(pidato) {
+    return buatElemen('header', { kelas: 'kartu-meta' }, [
+        pidato.kategori ? buatElemen('span', { kelas: 'speech-badge', teks: pidato.kategori }) : null,
+        buatElemen('time', {
+            kelas: 'kartu-tanggal',
+            datetime: pidato.tayang_pada.replace(' ', 'T'),
+            teks: formatTanggal(pidato.tayang_pada)
+        })
+    ]);
+}
+
+function barisDampak(label, hasil) {
+    return buatElemen('p', { kelas: 'kartu-dampak-baris' }, [
+        buatElemen('span', { kelas: 'kartu-dampak-label', teks: label }),
+        buatElemen('span', { kelas: `nilai-dampak ${hasil.kelas}`, teks: hasil.teks })
+    ]);
+}
+
+export function tautanPutar(pidato) {
+    return `arsip.html?putar=${encodeURIComponent(pidato.id)}`;
+}
+
+export function buatKartuPidato(pidato) {
+    const tautan = tautanPutar(pidato);
+    const thumbnail = buatThumbnail(pidato);
+    thumbnail.append(buatElemen('span', { kelas: 'thumb-putar', 'aria-hidden': 'true' }));
+
+    return buatElemen('article', { kelas: 'kartu-pidato' }, [
+        buatElemen('a', { href: tautan, kelas: 'kartu-thumb-tautan', tabindex: '-1', 'aria-hidden': 'true', 'data-putar': pidato.id },
+            thumbnail),
+        buatElemen('section', { kelas: 'kartu-isi' }, [
+            buatMetaPidato(pidato),
+            buatElemen('h3', { kelas: 'kartu-judul' },
+                buatElemen('a', { href: tautan, 'data-putar': pidato.id, teks: pidato.judul, title: `Putar: ${pidato.judul}` })),
+            buatElemen('footer', { kelas: 'kartu-dampak' }, [
+                barisDampak('IHSG', teksDampakIhsg(pidato.dampak_pasar.ihsg)),
+                barisDampak('Kurs IDR', teksDampakKurs(pidato.dampak_pasar.kurs))
+            ])
+        ])
+    ]);
+}
+
+export function buatKartuMemuat(jumlah) {
+    return Array.from({ length: jumlah }, () => buatElemen('article', { kelas: 'kartu-pidato kartu-memuat', 'aria-hidden': 'true' }, [
+        buatElemen('figure', { kelas: 'thumb' }),
+        buatElemen('section', { kelas: 'kartu-isi' }, [
+            buatElemen('span', { kelas: 'garis-memuat pendek' }),
+            buatElemen('span', { kelas: 'garis-memuat' }),
+            buatElemen('span', { kelas: 'garis-memuat' })
+        ])
+    ]));
 }
 
 function daftarNomorHalaman(sekarang, total) {

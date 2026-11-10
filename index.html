@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pidatoku - Pantau Pidato Presiden & Sentimen Pasar</title>
-    <link rel="stylesheet" href="css/styles.css?v=6">
+    <link rel="stylesheet" href="css/styles.css?v=9">
 </head>
 
 <body>
@@ -26,7 +26,7 @@
             </hgroup>
             <ul>
                 <li><a href="#live-monitor">Monitor Langsung</a></li>
-                <li><a href="#arsip-pidato">Arsip Data</a></li>
+                <li><a href="arsip.html">Arsip Data</a></li>
                 <li><a href="#kontak">Beri Masukan</a></li>
                 <li><a href="kelola-arsip.html">Kelola Arsip</a></li>
             </ul>
@@ -136,55 +136,11 @@
         <section id="arsip-pidato" aria-labelledby="arsip-title">
             <h2 id="arsip-title" class="section-title">Arsip Pidato Historis & Dampak Pasar</h2>
 
-            <section class="cards-grid">
-                <article class="card">
-                    <img src="assets/thumbnail-pidato1.jpg" alt="Presiden membacakan nota keuangan di gedung DPR"
-                        class="speech-thumbnail">
-                    <section class="speech-content">
-                        <header class="speech-meta">
-                            <span class="speech-badge">APBN 2027</span>
-                            <time class="speech-date" datetime="2026-08-16">16 Agustus 2026</time>
-                        </header>
-                        <h3>Pidato RUU APBN 2027</h3>
-                        <p class="speech-desc">Fokus anggaran belanja pemerintah diarahkan ke sektor kedaulatan digital,
-                            hilirisasi industri, dan ketahanan energi.</p>
-                        <footer class="speech-impact">
-                            <span class="impact-item">
-                                <span class="impact-label">IHSG</span>
-                                <span class="impact-value positive">+0,8%</span>
-                            </span>
-                            <span class="impact-item">
-                                <span class="impact-label">Kurs IDR</span>
-                                <span class="impact-value positive">Menguat 25 poin</span>
-                            </span>
-                        </footer>
-                    </section>
-                </article>
+            <section class="arsip-grid arsip-grid-beranda" id="arsip-terbaru" aria-live="polite"></section>
 
-                <article class="card">
-                    <img src="assets/thumbnail-pidato2.jpg" alt="Presiden memberikan amanat pada upacara kemerdekaan"
-                        class="speech-thumbnail">
-                    <section class="speech-content">
-                        <header class="speech-meta">
-                            <span class="speech-badge">HUT RI</span>
-                            <time class="speech-date" datetime="2026-08-17">17 Agustus 2026</time>
-                        </header>
-                        <h3>Pidato Kenegaraan HUT RI</h3>
-                        <p class="speech-desc">Penekanan arah geopolitik nasional, perlindungan rantai pasok ekonomi
-                            mikro, dan stabilitas cadangan devisa.</p>
-                        <footer class="speech-impact">
-                            <span class="impact-item">
-                                <span class="impact-label">IHSG</span>
-                                <span class="impact-value neutral">Pasar Libur</span>
-                            </span>
-                            <span class="impact-item">
-                                <span class="impact-label">Kurs IDR</span>
-                                <span class="impact-value neutral">Pasar Libur</span>
-                            </span>
-                        </footer>
-                    </section>
-                </article>
-            </section>
+            <p class="arsip-lihat-semua">
+                <a href="arsip.html" class="btn btn-outline">Lihat Semua Arsip →</a>
+            </p>
         </section>
 
         <section id="kontak" aria-labelledby="kontak-title">
@@ -250,7 +206,8 @@
         </section>
     </footer>
 
-    <script type="module" src="js/app.js?v=4"></script>
+    <script type="module" src="js/app.js?v=5"></script>
+    <script type="module" src="js/arsip-beranda.js?v=2"></script>
 </body>
 
 </html>

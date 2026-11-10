@@ -178,7 +178,7 @@ final class SumberYoutube
     private static function ringkasDeskripsi(string $deskripsi): ?string
     {
         $paragraf = trim((string) preg_split('/\R\s*\R/u', trim($deskripsi))[0]);
-        $paragraf = trim((string) preg_replace('/\s+/u', ' ', $paragraf));
+        $paragraf = trim((string) preg_replace(['/\*+/u', '/\s+/u'], ['', ' '], $paragraf));
 
         if ($paragraf === '') {
             return null;

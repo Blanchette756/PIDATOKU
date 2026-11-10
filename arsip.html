@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Arsip Pidato & Dampak Pasar - Pidatoku</title>
+    <link rel="stylesheet" href="css/styles.css?v=9">
+</head>
+
+<body>
+
+    <aside class="ticker-bar" role="status">
+        <span class="ticker-badge">PIDATO TERBARU</span>
+        <span class="ticker-title">PUSAT DATA FINANSIAL PRESIDEN</span>
+        <p class="ticker-marquee" aria-hidden="true">
+            <span>Grafik IHSG harian | Kurs referensi harian | Siaran langsung dari Istana Negara</span>
+        </p>
+    </aside>
+
+    <header>
+        <nav class="container nav-wrapper" aria-label="Navigasi Utama">
+            <hgroup class="brand">
+                <h1>Pidatoku</h1>
+                <p class="tagline">Platform Pantau Pidato & Sentimen Finansial</p>
+            </hgroup>
+            <ul>
+                <li><a href="index.html#live-monitor">Monitor Langsung</a></li>
+                <li><a href="arsip.html" aria-current="page">Arsip Data</a></li>
+                <li><a href="index.html#kontak">Beri Masukan</a></li>
+                <li><a href="kelola-arsip.html">Kelola Arsip</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="main" class="container">
+
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+            <a href="index.html">Beranda</a>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page">Arsip Pidato</span>
+        </nav>
+
+        <header class="arsip-hero">
+            <h2 class="page-title">Arsip Pidato & Dampak Pasar</h2>
+            <p class="section-desc">Kumpulan pidato Presiden beserta reaksi IHSG dan nilai tukar rupiah pada hari bursa
+                yang sama.</p>
+        </header>
+
+        <section class="stat-grid" aria-label="Ringkasan arsip">
+            <article class="card stat-card">
+                <h3 class="stat-label">Total Arsip</h3>
+                <p class="stat-angka"><strong id="stat-total">–</strong> <span>pidato</span></p>
+                <p class="stat-catatan" id="stat-sejak">Memuat...</p>
+            </article>
+            <article class="card stat-card">
+                <h3 class="stat-label">Rata-rata Dampak IHSG</h3>
+                <p class="stat-angka"><strong id="stat-rata">–</strong></p>
+                <p class="stat-catatan" id="stat-rata-catatan">Memuat...</p>
+            </article>
+            <article class="card stat-card">
+                <h3 class="stat-label">Kenaikan IHSG Terbesar</h3>
+                <p class="stat-angka"><strong id="stat-terbesar">–</strong></p>
+                <p class="stat-catatan" id="stat-terbesar-catatan">Memuat...</p>
+            </article>
+        </section>
+
+        <section class="unggulan" id="pemutar-arsip" aria-labelledby="unggulan-label">
+            <h2 class="eyebrow" id="unggulan-label">Pidato Unggulan</h2>
+
+            <section class="hero-grid dual-channel">
+                <article class="channel-card card">
+                    <header class="channel-header">
+                        <span class="channel-badge realtime" id="arsip-badge">PIDATO TERBARU</span>
+                        <span class="channel-number">SALURAN 01</span>
+                    </header>
+                    <h3 class="channel-title" id="arsip-judul">Memuat pidato...</h3>
+                    <figure class="stream-container" id="arsip-video">
+                        <span class="stream-overlay" aria-hidden="true">
+                            <svg class="play-icon" viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
+                                <polygon points="5,3 19,12 5,21"></polygon>
+                            </svg>
+                        </span>
+                    </figure>
+                    <footer class="channel-meta">
+                        <span class="meta-item"><strong>Sumber:</strong> <span id="arsip-sumber">Sekretariat
+                                Presiden</span></span>
+                        <span class="meta-item"><strong>Tayang:</strong> <time id="arsip-tanggal">-</time></span>
+                        <span class="meta-item"><strong>Durasi:</strong> <span id="arsip-durasi">-</span></span>
+                    </footer>
+                    <p class="arsip-deskripsi" id="arsip-deskripsi" hidden></p>
+                    <button type="button" class="btn btn-primary" id="arsip-tombol-putar" disabled>Putar Pidato</button>
+                </article>
+
+                <article class="channel-card card">
+                    <header class="channel-header">
+                        <span class="channel-badge market">DATA PASAR</span>
+                        <span class="channel-number">SALURAN 02</span>
+                    </header>
+                    <h3 class="channel-title" id="pasar-judul">IHSG & Nilai Tukar Rupiah</h3>
+
+                    <section class="market-grid">
+                        <section class="market-card card market-chart-card" aria-labelledby="pasar-ihsg-title">
+                            <header class="market-panel-header">
+                                <hgroup>
+                                    <p class="market-eyebrow">INDEKS HARGA SAHAM GABUNGAN</p>
+                                    <h4 id="pasar-ihsg-title">IHSG <span>Sekitar hari pidato</span></h4>
+                                </hgroup>
+                                <span class="market-session">Harian</span>
+                            </header>
+                            <p class="market-value">
+                                <span class="stat-val" id="pasar-ihsg-nilai">Memuat IHSG...</span>
+                                <span class="stat-change" id="pasar-ihsg-perubahan">-</span>
+                            </p>
+                            <figure class="ihsg-chart-frame" id="pasar-grafik" role="img"
+                                aria-label="Grafik harga penutupan IHSG di sekitar tanggal pidato">
+                                <p class="chart-status">Memuat grafik IHSG...</p>
+                            </figure>
+                            <p class="market-source">Sumber: Google Finance melalui Google Sheets. Garis putus-putus
+                                menandai hari pidato.</p>
+                        </section>
+
+                        <section class="market-card card currency-card" aria-labelledby="pasar-kurs-title">
+                            <header class="market-panel-header">
+                                <hgroup>
+                                    <p class="market-eyebrow">KURS REFERENSI HARI PIDATO</p>
+                                    <h4 id="pasar-kurs-title">Nilai Rupiah</h4>
+                                </hgroup>
+                            </header>
+                            <p class="market-value">
+                                <span class="stat-val" id="pasar-kurs-nilai">Memuat kurs...</span>
+                                <span class="stat-change" id="pasar-kurs-perubahan">1 USD = ... IDR</span>
+                            </p>
+                            <p class="market-label" id="pasar-kurs-catatan">Mengambil kurs referensi...</p>
+                        </section>
+                    </section>
+                </article>
+            </section>
+        </section>
+
+        <section class="semua-pidato" aria-labelledby="semua-pidato-title">
+            <h2 id="semua-pidato-title" class="section-title">Semua Pidato</h2>
+
+            <form class="arsip-toolbar" id="form-filter" role="search">
+                <label class="kolom-cari">
+                    <span class="visually-hidden">Cari judul pidato</span>
+                    <svg class="ikon-cari" viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="m20 20-3.5-3.5" />
+                    </svg>
+                    <input type="search" id="cari" name="q" placeholder="Cari judul pidato..." maxlength="100"
+                        autocomplete="off">
+                </label>
+                <label class="pilihan">
+                    <span>Tahun:</span>
+                    <select id="filter-tahun" name="tahun">
+                        <option value="">Semua</option>
+                    </select>
+                </label>
+                <label class="pilihan">
+                    <span>Urutkan:</span>
+                    <select id="filter-urutan" name="urutan">
+                        <option value="terbaru">Terbaru</option>
+                        <option value="terlama">Terlama</option>
+                        <option value="ihsg_tertinggi">IHSG Tertinggi</option>
+                        <option value="ihsg_terendah">IHSG Terendah</option>
+                    </select>
+                </label>
+            </form>
+
+            <p class="arsip-jumlah" id="info-jumlah" role="status" aria-live="polite">Memuat...</p>
+
+            <section class="arsip-grid" id="daftar-pidato" aria-live="polite"></section>
+
+            <nav class="pagination" id="pagination" aria-label="Halaman arsip pidato"></nav>
+        </section>
+
+    </main>
+
+    <footer>
+        <section class="container footer-content">
+            <p>&copy; 2026 Pidatoku. Mata Kuliah Pemrograman Web.</p>
+            <ul class="footer-links">
+                <li><a href="#main">Kembali ke Atas</a></li>
+                <li><a href="https://github.com/Blanchette756/PIDATOKU" target="_blank"
+                        rel="noopener noreferrer">Repositori GitHub</a></li>
+            </ul>
+        </section>
+    </footer>
+
+    <script type="module" src="js/halaman-arsip.js?v=2"></script>
+</body>
+
+</html>
